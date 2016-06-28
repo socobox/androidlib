@@ -97,6 +97,9 @@ public class ArchivoDigitalUtil {
                 public void onResponse(Call call, Response response) throws IOException {
                     if (!response.isSuccessful()) callback.err("Error");
 
+
+                    Log.d("ArchivoDigitalUtil", response.body().string());
+
                     try {
                         JSONObject obj = new JSONObject(response.body().string());
                         JSONArray items = obj.getJSONArray("results");
