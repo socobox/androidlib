@@ -7,7 +7,7 @@ import org.json.JSONObject;
 /**
  * @author https://archivo.digital
  */
-public class QueryBuilder {
+public class ADQueryBuilder {
 
     private JSONArray fetch;
     private JSONObject obj;
@@ -37,7 +37,7 @@ public class QueryBuilder {
         }
     }
 
-    public QueryBuilder(int domain, String rowModel) throws JSONException {
+    public ADQueryBuilder(int domain, String rowModel) throws JSONException {
         obj = new JSONObject();
         obj.put("domain", domain);
         obj.put("row_model", rowModel);
@@ -49,7 +49,7 @@ public class QueryBuilder {
         currentGroup.put("GROUP", new JSONArray());
     }
 
-    public QueryBuilder(int domain, String rowModel, int page, int size) throws JSONException {
+    public ADQueryBuilder(int domain, String rowModel, int page, int size) throws JSONException {
         obj = new JSONObject();
         obj.put("domain", domain);
         obj.put("row_model", rowModel);
@@ -63,7 +63,7 @@ public class QueryBuilder {
         currentGroup.put("GROUP", new JSONArray());
     }
 
-    public QueryBuilder newGroup(ANDOR andor) throws JSONException {
+    public ADQueryBuilder newGroup(ANDOR andor) throws JSONException {
         where.put(currentGroup);
         currentGroup = new JSONObject();
         currentGroup.put("ANDOR", andor);
@@ -71,7 +71,7 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder addField(OP op, ANDOR andor, String field, Object value) throws JSONException {
+    public ADQueryBuilder addField(OP op, ANDOR andor, String field, Object value) throws JSONException {
         JSONObject tmp = new JSONObject();
         tmp.put("ANDOR", andor.toString());
         tmp.put("FIELD", field);
@@ -81,12 +81,12 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder addRequire(String model) {
+    public ADQueryBuilder addRequire(String model) {
         required.put(model);
         return this;
     }
 
-    public QueryBuilder fetch(String[] models) {
+    public ADQueryBuilder fetch(String[] models) {
         for (String model : models) {
             fetch.put(model);
 

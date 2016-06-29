@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -21,10 +20,10 @@ import static android.content.ContentValues.TAG;
 /**
  * @author https://archivo.digital
  */
-public class ArchivoDigitalUtil {
+public class ADService {
 
 
-    private static ArchivoDigitalUtil singleton;
+    private static ADService singleton;
     private String key;
     private static final String URL = "https://archivo.digital/api/data/v1";
 
@@ -39,7 +38,7 @@ public class ArchivoDigitalUtil {
     /* A private Constructor prevents any other
      * class from instantiating.
      */
-    private ArchivoDigitalUtil(Context ctx) {
+    private ADService(Context ctx) {
 
         this.ctx = ctx;
 
@@ -61,16 +60,26 @@ public class ArchivoDigitalUtil {
     }
 
     /* Static 'instance' method */
-    public static ArchivoDigitalUtil getInstance(Context ctx) {
+    public static ADService getInstance(Context ctx) {
 
         if (singleton == null) {
-            singleton = new ArchivoDigitalUtil(ctx);
+            singleton = new ADService(ctx);
         }
 
         return singleton;
     }
 
-    public <T extends JSONAware> void findAllByQuery(String token, final JSONObject query, final CallbackListener<List<T>> callback, final Class<T> type) {
+    public <T extends ADJSONAware> void findAllByQuery(String token, final JSONObject query, final ADCallback<List<T>> callback, final Class<T> type) {
+
+        if(token==null){
+            callback.err("ERROR(1101): Please provide a valid security token.");
+            return;
+        }
+
+        if(key==null){
+            callback.err("ERROR(1103): Please set the <meta-data android:name=\"archivo.digital-key\" android:value=\"your-key-here\" /> in your AndroidManifest.xml");
+            return;
+        }
 
         final String modelName;
         try {
@@ -98,7 +107,7 @@ public class ArchivoDigitalUtil {
 
 
                     String json =response.body().string();
-                    Log.d("ArchivoDigitalUtil", json);
+                    Log.d("ADService", json);
 
                     try {
                         JSONObject obj = new JSONObject(json);
@@ -140,7 +149,7 @@ public class ArchivoDigitalUtil {
 
                         for (int i = 0; i < items.length(); i++) {
                             JSONObject object = items.getJSONObject(i);
-                            JSONAware tmp = type.newInstance();
+                            ADJSONAware tmp = type.newInstance();
 
 
                             if (query.has("fetch") && obj.has("fetched_results")) {

@@ -6,7 +6,7 @@ import org.json.JSONObject;
 /**
  * @author https://archivo.digital
  */
-public interface JSONAware<T> {
+public interface ADJSONAware<T> {
 
     T mapFromJSONObject(JSONObject object) throws JSONException;
 
