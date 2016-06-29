@@ -81,7 +81,6 @@ public class ArchivoDigitalUtil {
                     .url(URL + "/row/find")
                     .addHeader("App-Key", key)
                     .header("User-Agent", "AndroidLib")
-                    .header("Content-Encoding", "gzip")
                     .addHeader("Authorization", "Bearer " + token)
                     .post(body)
                     .build();
