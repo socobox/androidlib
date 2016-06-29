@@ -69,6 +69,30 @@ public class ADService {
         return singleton;
     }
 
+    public <T extends ADJSONAware> void getObject(String token, final JSONObject query, final ADCallback<T> callback, final Class<T> type) {
+
+        this.findAllByQuery(token, query, new ADCallback<List<T>>() {
+
+            @Override
+            public void ok(List<T> obj) {
+
+                if(obj.size()==1){
+                    callback.ok(obj.get(0));
+                }else{
+                    callback.err("Object not found");
+                }
+
+            }
+
+            @Override
+            public void err(String msg) {
+                callback.err(msg);
+            }
+
+        }, type);
+
+    }
+
     public <T extends ADJSONAware> void findAllByQuery(String token, final JSONObject query, final ADCallback<List<T>> callback, final Class<T> type) {
 
         if(token==null){
