@@ -1,4 +1,4 @@
-package digital.archivo.archivodigital_androidlib;
+package archivo.digital.android;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package digital.archivo.archivodigital_androidlib;
+package archivo.digital.android;
 
 /**
  * @author https://archivo.digital
