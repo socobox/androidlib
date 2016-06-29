@@ -135,6 +135,7 @@ public class ArchivoDigitalUtil {
                             fetchedObjects = obj.getJSONObject("fetched_results");
                         }
 
+
                         List<T> itemsList = new ArrayList<>(items.length());
 
                         for (int i = 0; i < items.length(); i++) {
