@@ -172,8 +172,6 @@ public class ADService {
 
                             }
 
-
-
                             //let the end user mappings do the magic
                             tmp.mapFromJSONObject(object);
                             itemsList.add((T) tmp);
