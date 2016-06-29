@@ -97,10 +97,11 @@ public class ArchivoDigitalUtil {
                     if (!response.isSuccessful()) callback.err("Error");
 
 
-                    Log.d("ArchivoDigitalUtil", response.body().string());
+                    String json =response.body().string();
+                    Log.d("ArchivoDigitalUtil", json);
 
                     try {
-                        JSONObject obj = new JSONObject(response.body().string());
+                        JSONObject obj = new JSONObject(json);
                         JSONArray items = obj.getJSONArray("results");
                         JSONArray model = obj.getJSONArray("model");
 
