@@ -1,9 +1,9 @@
 # androidlib
-#Archivo.Digital SDK
+**Archivo.Digital** SDK
 
 
 
-El propósito de esta librería es facilitar el desarrollo de aplicaciones android con Archivo.Digital
+El propósito de esta librería es facilitar el desarrollo de aplicaciones android con **Archivo.Digital**
 
 NOTA: Todos los ejemplos de código mencionados en esta documentación, los puedes ver en ejecución en nuestra aplicación de ejemplo que se encuentra aquí: https://github.com/ArchivoDigital/archivo.digital-androidstart
 
@@ -27,9 +27,9 @@ Agregamos la librería como dependencia
                 compile 'com.github.ArchivoDigital:androidlib:1.0.5'
             }
 
-Hay 2 componentes básicos: ADQueryBuilder y ADService
+Hay 2 componentes básicos: **ADQueryBuilder** y **ADService**
 
-*ADQueryBuilder* es una utilidad para crear queries de manera rápida y evitando errores de sintáxis, supongamos que queremos buscar los registros de tipo PRODUCTO de nuestro dominio de tutorial DEMOAPP.
+**ADQueryBuilder** es una utilidad para crear queries de manera rápida y evitando errores de sintáxis, supongamos que queremos buscar los registros de tipo PRODUCTO de nuestro dominio de tutorial DEMOAPP.
 
             int idDominio = 73;
             String nombre = "PRODUCTO";
@@ -43,12 +43,12 @@ Hay 2 componentes básicos: ADQueryBuilder y ADService
             // Finalmente compilamos el query para que nos genere el JSON que lo representa.
             JSONObject jsonQuery = qb.compile();
             
-A partir de este momento, podemos usar el json para mandar el query a Archivo.Digital con cualquier librería de conexión HTTP que deseemos y al final recibiremos un JSON de repsuesta que podremos manipular a nuestro antojo.
+A partir de este momento, podemos usar el json para mandar el query a **Archivo.Digital** con cualquier librería de conexión HTTP que deseemos y al final recibiremos un JSON de repsuesta que podremos manipular a nuestro antojo.
 
 
-*ADService* es una utilidad que nos va a permitir agregar un nivel adicional de facilidad para agregar soporte de Archivo.Digital a nuestro proyecto de Android.
+**ADService** es una utilidad que nos va a permitir agregar un nivel adicional de facilidad para agregar soporte de **Archivo.Digital** a nuestro proyecto de Android.
 
-Operaciones como cargar datos de *Archivo.Digital* en nuestro modelo de datos serán mucho más simples, veamos un ejemplo:
+Operaciones como cargar datos de **Archivo.Digital** en nuestro modelo de datos serán mucho más simples, veamos un ejemplo:
 
 En el esquema de datos de ejemplo tenemos dos modelos que saremos aquí: PRODUCTO y GRUPO, donde un PRODUCTO tiene una REFERENCIA a su GRUPO a través de la propiedad GRUPO_PRODUCTO.
 
@@ -91,7 +91,7 @@ Es importante saber que al agregar esta interfaz a nuestras clases, debemos de i
 
             JSONObject toJSONObject() throws JSONException;
 
-mapFromJSONObject es el método que va a recibir el objeto de JSON por parte ADService y a su vez va a definir el mapeo entre las propiedades del JSON y las propiedades del Java Bean, veamos un ejemplo con GrupoProducto:
+mapFromJSONObject es el método que va a recibir el objeto de JSON por parte **ADService** y a su vez va a definir el mapeo entre las propiedades del JSON y las propiedades del Java Bean, veamos un ejemplo con GrupoProducto:
 
             @Override
             public GrupoProducto mapFromJSONObject(JSONObject object) throws JSONException {
@@ -102,9 +102,9 @@ mapFromJSONObject es el método que va a recibir el objeto de JSON por parte ADS
             }
 
 
-Aquí, tomamos los valores definidos en nuestro modelo que nos llegaron en el JSONObject y los asignamos a las diferentes propiedades de nuestro Java Bean *GrupoProducto*
+Aquí, tomamos los valores definidos en nuestro modelo que nos llegaron en el JSONObject y los asignamos a las diferentes propiedades de nuestro Java Bean **GrupoProducto**
 
-toJSONObject es el método que nos permite definir usando un JSONObject los valores que serán enviados a nuestro repositorio de datos en Archivo.Digital veamos un ejemplo con GrupoProducto:
+toJSONObject es el método que nos permite definir usando un JSONObject los valores que serán enviados a nuestro repositorio de datos en **Archivo.Digital** veamos un ejemplo con GrupoProducto:
 
             @Override
             public JSONObject toJSONObject() throws JSONException {
@@ -122,10 +122,40 @@ toJSONObject es el método que nos permite definir usando un JSONObject los valo
             }
 
 
-Listo! Ya nuestro dominio sabe cómo convertirse en JSON y cómo cargarse desde un JSON, con esto resuelto podemos pedir a ADService que nos cargue datos así:
+Listo! Ya nuestro dominio sabe cómo convertirse en JSON y cómo cargarse desde un JSON, con esto resuelto podemos pedir a **ADService** que nos cargue datos siguiendo los siguientes pasos:
 
+***Paso:1 ->***  Implementamos un **ADCallback** como componente que se ejecute cuando los objetos sean cargados implementando tanto el caso de éxito(función:ok) como el caso de error(función:error)
 
+            ADCallback<List<GrupoProducto>> cb  = new ADCallback<List<GrupoProducto>>() {
+                @Override
+                public void ok(List<GrupoProducto> obj) {
+                    // procesamos aquí cualquier lógica de objetos con los resultados
+                    mList.clear();
+                    mList.addAll(obj);
+                    //corremos en el hilo principal cualquier actualización visual
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            someAdapter.notifyDataSetChanged();
+                        }
+                    });
 
+                }
+
+                @Override
+                public void err(String msg) {
+                    //agregamos manejo de errores
+                }
+            }
+
+***Paso:2 ->***  Creamos el query usando **ADQueryBuilder** que deseamos ejecutar para traer nuestros objetos GRUPO_PRODUCTO:
+
+            JSONObject obj = new ADQueryBuilder(DOMAIN, "GRUPO_PRODUCTO", 1, 1000).compile();
+
+***Paso:3 ->***  Usamos **ADService** para que nos cargue los registros de GRUPO_PRODUCTO en un java.util.List de tipo GrupoProducto y ejecute el **ADCallback** que definimos en el **Paso 1**:
+            ADService.getInstance(ctx).findAllByQuery(token, obj, cb, GrupoProducto.class);
+
+Eso es todo, nuestra aplicación ya carga datos de manera ordenada consumiendo servicios REST de **Archivo.Digital** de una manera simple y no tenemos que implementar el uso de ninguna librería nueva para conectarnos o descargar nuestros objetos de dominio, dedicando así más tiempo a lo que importa que es nuestra App dando valor de negocio.
 
 
 
