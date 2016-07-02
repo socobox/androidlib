@@ -153,6 +153,7 @@ Listo! Ya nuestro dominio sabe cómo convertirse en JSON y cómo cargarse desde 
             JSONObject obj = new ADQueryBuilder(DOMAIN, "GRUPO_PRODUCTO", 1, 1000).compile();
 
 ***Paso:3 ->***  Usamos **ADService** para que nos cargue los registros de GRUPO_PRODUCTO en un java.util.List de tipo GrupoProducto y ejecute el **ADCallback** que definimos en el **Paso 1**:
+
             ADService.getInstance(ctx).findAllByQuery(token, obj, cb, GrupoProducto.class);
 
 Eso es todo, nuestra aplicación ya carga datos de manera ordenada consumiendo servicios REST de **Archivo.Digital** de una manera simple y no tenemos que implementar el uso de ninguna librería nueva para conectarnos o descargar nuestros objetos de dominio, dedicando así más tiempo a lo que importa que es nuestra App dando valor de negocio.
