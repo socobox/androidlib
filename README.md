@@ -150,6 +150,7 @@ Listo! Ya nuestro dominio sabe cómo convertirse en JSON y cómo cargarse desde 
 
 ***Paso:2 ->***  Creamos el query usando **ADQueryBuilder** que deseamos ejecutar para traer nuestros objetos GRUPO_PRODUCTO:
 
+            // Este ADQueryBuilder indica: Queremos traer la primera página de 1000 registros de GRUPO_PRODUCTO que está en el dominio DOMAIN(aquí va el ID de nuestro domino)
             JSONObject obj = new ADQueryBuilder(DOMAIN, "GRUPO_PRODUCTO", 1, 1000).compile();
 
 ***Paso:3 ->***  Usamos **ADService** para que nos cargue los registros de GRUPO_PRODUCTO en un java.util.List de tipo GrupoProducto y ejecute el **ADCallback** que definimos en el **Paso 1**:
