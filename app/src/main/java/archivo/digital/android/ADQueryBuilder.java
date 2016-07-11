@@ -288,7 +288,7 @@ public class ADQueryBuilder {
             }
         }else{
             if (row.length() > 0) {
-                obj.put("row", row);
+                obj.put("rows", row);
             }
         }
         return obj;
