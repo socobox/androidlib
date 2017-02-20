@@ -77,7 +77,7 @@ public class Category {
 ```
 Si un atributo hace referencia a otro modelo, se puede realizar de la siguiente forma:
 
-```
+```java
 @SbxModelName("Product")
 public class Product {
 
@@ -121,12 +121,14 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
 
         //login usuario
         System.out.println(SbxAuth.getDefaultSbxAuth().getUrllogin(user));
+        //add manually the response token to the user
         user.token="token-asdf-234-asd";
         SbxAuth.getDefaultSbxAuth().refreshToken(user);
 
         //insertar un modelo
         Category category = new Category("lacteos");
         System.out.println(SbxModelHelper.getUrlinsertRow(category));
+        //add manually the response key to the category
         category.key="laksdf-asdf-234-asdf";
 
         //insertar un modelo con referencia
@@ -138,7 +140,9 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
         sbxQueryBuilder.whereLessThan("price",40);
         System.out.println(SbxModelHelper.getUrlQuery(sbxQueryBuilder));
 
+
          //crea un objeto a partir de un Json y una clase personalizada con anotaciones
         JSONObject jsonObject = new JSONObject("{\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":\"laksdf-asdf-234-asdf\"}");
         Product p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
 ```
+
