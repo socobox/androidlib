@@ -77,7 +77,7 @@ public class Category {
 ```
 Si un atributo hace referencia a otro modelo, se puede realizar de la siguiente forma:
 
-```
+```java
 @SbxModelName("Product")
 public class Product {
 
@@ -119,12 +119,14 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
 
         //login usuario
         System.out.println(SbxAuth.getDefaultSbxAuth().getUrllogin(user));
+        //add manually the response token to the user
         user.token="token-asdf-234-asd";
         SbxAuth.getDefaultSbxAuth().refreshToken(user);
 
         //insertar un modelo
         Category category = new Category("lacteos");
         System.out.println(SbxModelHelper.getUrlinsertRow(category));
+        //add manually the response key to the category
         category.key="laksdf-asdf-234-asdf";
 
         //insertar un modelo con referencia
