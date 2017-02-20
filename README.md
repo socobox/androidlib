@@ -1,11 +1,11 @@
 # androidlib
-## **Archivo.Digital** Android SDK
+## **SbxCloud** Android SDK
 
 
 
-El propósito de esta librería es facilitar el desarrollo de aplicaciones android con **Archivo.Digital**
+El propósito de esta librería es facilitar el desarrollo de aplicaciones android con **SbxCloud**
 
-NOTA: Todos los ejemplos de código mencionados en esta documentación, los puedes ver en ejecución en nuestra aplicación de ejemplo que se encuentra aquí: https://github.com/ArchivoDigital/archivo.digital-androidstart
+
 
 Si tienes alguna duda te invitamos a participar de nuestro canal de slack, simplemente ingresa a: https://archivodigitalslack.herokuapp.com y pide tu invitación, allí encontrarás personas que como tú están desarrollando sus soluciones con nuestra plataforma.
 
@@ -26,138 +26,128 @@ Agregamos la librería como dependencia
                 //...otras dependencias de tu proyeco aquí.....
                 compile 'com.github.ArchivoDigital:androidlib:1.0.5'
             }
-
-Hay 2 componentes básicos: **ADQueryBuilder** y **ADService**
-
-**ADQueryBuilder** es una utilidad para crear queries de manera rápida y evitando errores de sintáxis, supongamos que queremos buscar los registros de tipo PRODUCTO de nuestro dominio de tutorial DEMOAPP.
-
-            int idDominio = 73;
-            String nombre = "PRODUCTO";
-            int numPagina = 1;
-            int tamanoPagina = 100;
-            // creamos un query básico con los siguiente parámetros:
-            QueryBuilder qb = new QueryBuilder(idDominio, nombre, numPagina, tamanoPagina);
-            // adicionalmente vamos a decir que con los resultados del query, nos traiga de una vez el GRUPO al que pertenece un PRODUCTO, lo cual est´á definido en el modelo del PRODUCTO: 
-            // PRODUCTO-> GRUPO->	REFERENCE->	GRUPO_PRODUCTO
-            qb.fetch(new String[]{"GRUPO"});
-            // Finalmente compilamos el query para que nos genere el JSON que lo representa.
-            JSONObject jsonQuery = qb.compile();
             
-A partir de este momento, podemos usar el json para mandar el query a **Archivo.Digital** con cualquier librería de conexión HTTP que deseemos y al final recibiremos un JSON de repsuesta que podremos manipular a nuestro antojo.
+Esta librería se basa en annotaciones. Para crear tu propia Clase usuario puedes hacerla así:
+```java
+public class User {
+    @SbxNameField
+    String name;
+
+    @SbxUsernameField
+    String username;
+
+    @SbxEmailField
+    String email;
+
+    @SbxPasswordField
+    String password;
+
+    @SbxAuthToken
+    String token;
+
+    @SbxKey
+    String key;
+    
+    public User(String name, String username, String email, String password) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+}
+```
+Para crear un modelo lo puedes realizar de la siguiente forma:
+Donde SbxModelName marca el nombre del modelo  y el campo name de SbxParamField hace referencia a el nombre de los atributos en Sbxcloud.com
+
+```java
+@SbxModelName("Category")
+public class Category {
+
+    @SbxKey
+    String key;
+
+    @SbxParamField(name = "description")
+    String name;
+
+    public Category(){}
+
+    public Category(String name) {
+        this.name = name;
+    }
+}
+```
+Si un atributo hace referencia a otro modelo, se puede realizar de la siguiente forma:
+
+```java
+@SbxModelName("Product")
+public class Product {
+
+    @SbxKey
+    String key;
+
+    @SbxParamField(name = "description")
+    String name;
+
+    @SbxParamField()
+    double price;
+
+    @SbxParamField()
+    Date expireAt;
+
+    @SbxParamField()
+    Category category;
+
+    public Product(){}
+
+    public Product(String name, double price, Category category) {
+        this.category = category;
+        this.price = price;
+        this.name = name;
+        this.expireAt=new Date();
+    }
+}
+```
 
 
-**ADService** es una utilidad que nos va a permitir agregar un nivel adicional de facilidad para agregar soporte de **Archivo.Digital** a nuestro proyecto de Android.
+Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres conveniente. La clase SbxUrlComposer te genera los datos de conexión necesarios y accedes a estos con los métodos getUrl(), getType(), getHeader(), getBody()
 
-Operaciones como cargar datos de **Archivo.Digital** en nuestro modelo de datos serán mucho más simples, veamos un ejemplo:
+```java
+        //Iniciar la librería con el dominio y el App-key, puede ser en tu custom Application.class
+        SbxAuth.initialize(80,"KASDFasd-asdfadsf-asdfadsf-asdf");
 
-En el esquema de datos de ejemplo tenemos dos modelos que saremos aquí: PRODUCTO y GRUPO, donde un PRODUCTO tiene una REFERENCIA a su GRUPO a través de la propiedad GRUPO_PRODUCTO.
+        //Datos
+        //Registrar un usuario
+        User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.co","123456");
+        System.out.println(SbxAuth.getDefaultSbxAuth().getUrlSigIn(user));
 
-En nuestro proyecto de Android de ejemplo encontraremos dos clases en dominio escritas usando Java así:
+        //login usuario
+        System.out.println(SbxAuth.getDefaultSbxAuth().getUrllogin(user));
+        //add manually the response token to the user
+        user.token="token-asdf-234-asd";
+        SbxAuth.getDefaultSbxAuth().refreshToken(user);
 
-            public class GrupoProducto {
-                private String key;
-                private String nombre;
-                private float vlrDomicilio;
+        //insertar un modelo
+        Category category = new Category("lacteos");
+        System.out.println(SbxModelHelper.getUrlinsertRow(category));
+        //add manually the response key to the category
+        category.key="laksdf-asdf-234-asdf";
 
-                // ... código get set de los miembros de la clase.
+        //insertar un modelo con referencia
+        Product product= new Product("leche",13.00,category);
+        System.out.println(SbxModelHelper.getUrlinsertRow(product));
 
-            }
-
-            public class Producto {
-                private String key;
-                private String nombre;
-                private String description;
-                private String grupo;
-                private GrupoProducto grupoReference;
-
-                // ... código get set de los miembros de la clase.
-
-            }
-
-
-Lo primero que vamos a hacer es agregar una interfaz a ambas clases cuyo contrato nos va a permitir darles visibilidad en nuestro componente clave: ADService.
-
-Vamos a quedar con:
-
-public class Producto implements ADJSONAware<Producto> {
-
-Y con:
-
-public class GrupoProducto implements ADJSONAware<GrupoProducto> {
-
-Es importante saber que al agregar esta interfaz a nuestras clases, debemos de implementar 2 métodos:
-
-            mapFromJSONObject(JSONObject object) throws JSONException;
-
-            JSONObject toJSONObject() throws JSONException;
-
-mapFromJSONObject es el método que va a recibir el objeto de JSON por parte **ADService** y a su vez va a definir el mapeo entre las propiedades del JSON y las propiedades del Java Bean, veamos un ejemplo con GrupoProducto:
-
-            @Override
-            public GrupoProducto mapFromJSONObject(JSONObject object) throws JSONException {
-                setKey(object.getString("_KEY"));
-                setNombre(object.getString("NOMBRE"));
-                setVlrDomicilio(object.getInt("VALOR_DOMICILIO"));
-                return this;
-            }
+        //Buscar los primeros 100 productos cuyo precio sea menor de 40
+        SbxQueryBuilder sbxQueryBuilder= SbxModelHelper.prepareQuery(Product.class,1,100);
+        sbxQueryBuilder.whereLessThan("price",40);
+        System.out.println(SbxModelHelper.getUrlQuery(sbxQueryBuilder));
 
 
-Aquí, tomamos los valores definidos en nuestro modelo que nos llegaron en el JSONObject y los asignamos a las diferentes propiedades de nuestro Java Bean **GrupoProducto**
+         //crea un objeto a partir de un Json y una clase personalizada con anotaciones
+        JSONObject jsonObject = new JSONObject("{\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":\"laksdf-asdf-234-asdf\"}");
+        Product p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
 
-toJSONObject es el método que nos permite definir usando un JSONObject los valores que serán enviados a nuestro repositorio de datos en **Archivo.Digital** veamos un ejemplo con GrupoProducto:
-
-            @Override
-            public JSONObject toJSONObject() throws JSONException {
-                JSONObject obj = new JSONObject();
-
-                // if the object has a key
-                if(getKey()!=null){
-                    obj.put("_KEY", getKey());
-                }
-
-                obj.put("NOMBRE", getNombre());
-                obj.put("VALOR_DOMICILIO", getVlrDomicilio());
-
-                return obj;
-            }
-
-
-Listo! Ya nuestro dominio sabe cómo convertirse en JSON y cómo cargarse desde un JSON, con esto resuelto podemos pedir a **ADService** que nos cargue datos siguiendo los siguientes pasos:
-
-***Paso:1 ->***  Implementamos un **ADCallback** como componente que se ejecute cuando los objetos sean cargados implementando tanto el caso de éxito(función:ok) como el caso de error(función:error)
-
-            ADCallback<List<GrupoProducto>> cb  = new ADCallback<List<GrupoProducto>>() {
-                @Override
-                public void ok(List<GrupoProducto> obj) {
-                    // procesamos aquí cualquier lógica de objetos con los resultados
-                    mList.clear();
-                    mList.addAll(obj);
-                    //corremos en el hilo principal cualquier actualización visual
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            someAdapter.notifyDataSetChanged();
-                        }
-                    });
-
-                }
-
-                @Override
-                public void err(String msg) {
-                    //agregamos manejo de errores
-                }
-            }
-
-***Paso:2 ->***  Creamos el query usando **ADQueryBuilder** que deseamos ejecutar para traer nuestros objetos GRUPO_PRODUCTO:
-
-            // Este ADQueryBuilder indica: Queremos traer la primera página de 1000 registros de GRUPO_PRODUCTO que está en el dominio DOMAIN(aquí va el ID de nuestro domino)
-            JSONObject obj = new ADQueryBuilder(DOMAIN, "GRUPO_PRODUCTO", 1, 1000).compile();
-
-***Paso:3 ->***  Usamos **ADService** para que nos cargue los registros de GRUPO_PRODUCTO en un java.util.List de tipo GrupoProducto y ejecute el **ADCallback** que definimos en el **Paso 1**:
-
-            ADService.getInstance(ctx).findAllByQuery(token, obj, cb, GrupoProducto.class);
-
-Eso es todo, nuestra aplicación ya carga datos de manera ordenada consumiendo servicios REST de **Archivo.Digital** de una manera simple y no tenemos que implementar el uso de ninguna librería nueva para conectarnos o descargar nuestros objetos de dominio, dedicando así más tiempo a lo que importa que es nuestra App dando valor de negocio.
-
-
+        //crea objeto incluso si hace referencia a otro
+        jsonObject = new JSONObject("{\"_KEY\": \"95979b68-cc4a-416d-46c550380031\",\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":{\"_KEY\": \"laksdf-asdf-234-asdf\",\"description\":\"lacteos\"}}");
+        p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
+```
 
