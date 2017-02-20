@@ -7,7 +7,7 @@ El propósito de esta librería es facilitar el desarrollo de aplicaciones andro
 
 
 
-Si tienes alguna duda te invitamos a participar de nuestro canal de slack, simplemente ingresa a: https://archivodigitalslack.herokuapp.com y pide tu invitación, allí encontrarás personas que como tú están desarrollando sus soluciones con nuestra plataforma.
+Si tienes alguna duda te invitamos a participar de nuestro canal de slack, simplemente ingresa a: https://sbxcloud.herokuapp.com y pide tu invitación, allí encontrarás personas que como tú están desarrollando sus soluciones con nuestra plataforma.
 
 
 Para comenzar a usar el SDK de Android, simplemente debemos de agregar la siguientes líneas a nuestra configuración de gradle(build.gradle):
