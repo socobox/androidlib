@@ -1,6 +1,9 @@
 package com.sbxcloud.android.sbxcloudsdk.util;
 
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
+import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
+import com.sbxcloud.android.sbxcloudsdk.query.SbxKey;
+import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
 import com.sbxcloud.android.sbxcloudsdk.query.SbxParamField;
 
 import org.json.JSONObject;
@@ -20,21 +23,23 @@ public class SbxMagicComposer {
     public static Object getSbxModel(JSONObject jsonObject,  Class<?> clazz, int level)throws  Exception{
         level++;
         //accept only two level
-        if (level==2)
+        if (level==3)
             return null;
+        if(!SbxModelHelper.hasKeyAnnotation(clazz)){
+            throw new SbxModelException("SbxKey is required");
+        }
         Constructor<?> ctor = clazz.getConstructor();
         Object o = ctor.newInstance();
         final Field[] variables = clazz.getDeclaredFields();
 
         for (final Field variable : variables) {
-
+            boolean isAccessible=variable.isAccessible();
+            variable.setAccessible(true);
             final Annotation annotation = variable.getAnnotation(SbxParamField.class);
 
             if (annotation != null && annotation instanceof SbxParamField) {
                 try {
-                    boolean isAccessible=variable.isAccessible();
-                    variable.setAccessible(true);
-                    String name=((SbxParamField)annotation).name();
+
                     String variabletype=variable.getGenericType().toString();
                     switch (variabletype){
                         case "class java.lang.String":{
@@ -69,29 +74,55 @@ public class SbxMagicComposer {
                         }
                         default:{
 
-//                            Object obj= jsonObject.get(SbxDataValidator.getAnnotationName(variable,annotation));
-//                            if(obj instanceof String){
-//                                variable.set(o,null);
-//                            }else {
-//                                variable.set(o,
-//                                        getSbxModel(
-//                                                jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
-//                                                , clazz, level)
-//                                );
-//                            }
+                            Object obj= jsonObject.get(SbxDataValidator.getAnnotationName(variable,annotation));
+                            if(obj instanceof String){
+                               Object reference=variable.getType().getConstructor().newInstance();
+                                final Field[] variables2 = variable.getType().getDeclaredFields();
+                                for (final Field variable2 : variables2) {
+
+                                    final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
+
+                                    if (annotation2 != null && annotation2 instanceof SbxKey) {
+                                        try {
+                                            boolean isAccessible2 = variable2.isAccessible();
+                                            variable2.setAccessible(true);
+                                            variable2.set(reference, obj);
+                                            variable2.setAccessible(isAccessible2);
+                                            break;
+                                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                                            throw new SbxAuthException(e);
+                                        }
+                                    }
+                                }
+                                variable.set(o,reference);
+                            }else {
+                                variable.set(o,
+                                        getSbxModel(
+                                                jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
+                                                , variable.getType(), level)
+                                );
+                            }
                             break;
                         }
 
 
                     }
-
-                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
 
             }
+            final Annotation annotationK = variable.getAnnotation(SbxKey.class);
+            if (annotationK != null && annotationK instanceof SbxKey) {
+                try {
 
+                variable.set(o,jsonObject.optString("_KEY"));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+
+            }
+            variable.setAccessible(isAccessible);
 
         }
 

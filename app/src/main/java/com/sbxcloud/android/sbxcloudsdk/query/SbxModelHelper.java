@@ -27,11 +27,15 @@ import java.util.Date;
 public class SbxModelHelper {
 
     public static SbxUrlComposer getUrlinsertRow(Object o)throws Exception {
+
         int domain = SbxAuth.getDefaultSbxAuth().getDomain();
         String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
         String token = SbxAuth.getDefaultSbxAuth().getToken();
         Class<?> myClass = o.getClass();
 
+        if(!hasKeyAnnotation(myClass)){
+            throw new SbxModelException("SbxKey is required");
+        }
         Annotation annotationClass = myClass.getAnnotation(SbxModelName.class);
         String modelName="";
         if(annotationClass instanceof SbxModelName){
@@ -188,5 +192,18 @@ public class SbxModelHelper {
                 .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
                 .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
                 .addBody(sbxQueryBuilder.compile());
+    }
+
+    public static boolean hasKeyAnnotation(Class<?> myClass){
+        final Field[] variables = myClass.getDeclaredFields();
+
+        for (final Field variable : variables) {
+
+            final Annotation annotation = variable.getAnnotation(SbxKey.class);
+            if (annotation != null && annotation instanceof SbxKey) {
+                return true;
+            }
+        }
+        return false;
     }
 }

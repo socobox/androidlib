@@ -40,6 +40,7 @@ public class Product {
     @Override
     public boolean equals(Object obj) {
         Product product= (Product)obj;
-        return this.price==product.price && this.name.equals(product.name);
+        return this.price==product.price && this.name.equals(product.name) &&
+                this.category.key.equals(product.category.key);
     }
 }

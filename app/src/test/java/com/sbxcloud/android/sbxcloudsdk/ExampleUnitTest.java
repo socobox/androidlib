@@ -62,6 +62,10 @@ public class ExampleUnitTest {
         JSONObject jsonObject = new JSONObject("{\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":\"laksdf-asdf-234-asdf\"}");
         Product p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
 
+        //Create nested Object
+        jsonObject = new JSONObject("{\"_KEY\": \"95979b68-cc4a-416d-46c550380031\",\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":{\"_KEY\": \"laksdf-asdf-234-asdf\",\"description\":\"lacteos\"}}");
+        p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
+
         Assert.assertEquals(true,p.equals(product));
 
     }
