@@ -8,6 +8,7 @@ import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxUsernameField;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxConfigException;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
+import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 import com.sbxcloud.android.sbxcloudsdk.util.UrlHelper;
 
@@ -55,8 +56,9 @@ public class SbxModelHelper {
 
             if (annotation != null && annotation instanceof SbxParamField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
-                    String name=((SbxParamField)annotation).name();
+                    String name= SbxDataValidator.getAnnotationName(variable,annotation);
                     String variabletype=variable.getGenericType().toString();
                     switch (variabletype){
                         case "class java.lang.String":{
@@ -103,6 +105,7 @@ public class SbxModelHelper {
 
                     }
 
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -131,8 +134,11 @@ public class SbxModelHelper {
 
             if (annotation != null && annotation instanceof SbxKey) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
-                    return (String)variable.get(o);
+                    String s= (String)variable.get(o);
+                    variable.setAccessible(isAccessible);
+                    return s;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }

@@ -114,8 +114,10 @@ public class SbxAuth {
 
             if (annotation != null && annotation instanceof SbxAuthToken) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     token= (String)variable.get(obj);
+                    variable.setAccessible(isAccessible);
                     return  token;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxConfigException(e);
@@ -141,8 +143,11 @@ public class SbxAuth {
 
             if (annotation != null && annotation instanceof SbxAppKeyField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
-                    return (String)variable.get(app);
+                    String s= (String)variable.get(app);
+                    variable.setAccessible(isAccessible);
+                    return s;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxConfigException(e);
                 }
@@ -167,8 +172,11 @@ public class SbxAuth {
 
             if (annotation != null && annotation instanceof SbxDomainField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
-                    return variable.getInt(app);
+                    int s= variable.getInt(app);
+                    variable.setAccessible(isAccessible);
+                    return s;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxConfigException(e);
                 }
@@ -194,8 +202,10 @@ public class SbxAuth {
 
             if (annotation != null && annotation instanceof SbxUsernameField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     username= (String)variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -207,8 +217,10 @@ public class SbxAuth {
 
             if (annotationE != null && annotationE instanceof SbxEmailField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     email= (String)variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -219,8 +231,10 @@ public class SbxAuth {
 
             if (annotationP != null && annotationP instanceof SbxPasswordField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     password= (String)variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -274,8 +288,10 @@ public class SbxAuth {
 
             if (annotation != null && annotation instanceof SbxUsernameField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     username = (String) variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -287,8 +303,10 @@ public class SbxAuth {
 
             if (annotationE != null && annotationE instanceof SbxEmailField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     email = (String) variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -299,8 +317,10 @@ public class SbxAuth {
 
             if (annotationP != null && annotationP instanceof SbxPasswordField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     password = (String) variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -311,8 +331,10 @@ public class SbxAuth {
 
             if (annotationN != null && annotationN instanceof SbxNameField) {
                 try {
+                    boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
                     name = (String) variable.get(o);
+                    variable.setAccessible(isAccessible);
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }

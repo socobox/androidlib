@@ -87,14 +87,16 @@ public class Product {
     @SbxParamField(name = "description")
     String name;
 
-    @SbxParamField(name = "price")
+    @SbxParamField()
     double price;
 
-    @SbxParamField(name = "expireAt")
+    @SbxParamField()
     Date expireAt;
 
-    @SbxParamField(name = "category")
+    @SbxParamField()
     Category category;
+
+    public Product(){}
 
     public Product(String name, double price, Category category) {
         this.category = category;
@@ -135,4 +137,8 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
         SbxQueryBuilder sbxQueryBuilder= SbxModelHelper.prepareQuery(Product.class,1,100);
         sbxQueryBuilder.whereLessThan("price",40);
         System.out.println(SbxModelHelper.getUrlQuery(sbxQueryBuilder));
+
+         //crea un objeto a partir de un Json y una clase personalizada con anotaciones
+        JSONObject jsonObject = new JSONObject("{\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":\"laksdf-asdf-234-asdf\"}");
+        Product p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
 ```

@@ -1,5 +1,7 @@
 package com.sbxcloud.android.sbxcloudsdk.query;
 
+import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -127,7 +129,7 @@ public class SbxQueryBuilder {
         public SbxQueryBuilder insertFieldAtRow(String field, Object data, int position)throws  Exception{
             if(row!=null){
                 if(position < row.length())
-                    row.getJSONObject(position).put(field,data);
+                    row.getJSONObject(position).put(field, SbxDataValidator.validate( data));
                 else
                     new Exception("index Of Bound");
             }else{
@@ -140,7 +142,7 @@ public class SbxQueryBuilder {
             int position=0;
             if(row!=null){
                 if(position < row.length())
-                    row.getJSONObject(position).put(field,data);
+                    row.getJSONObject(position).put(field, SbxDataValidator.validate( data));
                 else
                     new Exception("index Of bound");
             }else{
@@ -153,7 +155,7 @@ public class SbxQueryBuilder {
 
             if(row!=null){
                 if( row.length() > 0)
-                    row.getJSONObject(row.length()-1).put(field,data);
+                    row.getJSONObject(row.length()-1).put(field, SbxDataValidator.validate( data));
                 else
                     new Exception("is Empty");
             }else{

@@ -19,13 +19,13 @@ public class Product {
     @SbxParamField(name = "description")
     String name;
 
-    @SbxParamField(name = "price")
+    @SbxParamField()
     double price;
 
-    @SbxParamField(name = "expireAt")
+    @SbxParamField()
     Date expireAt;
 
-    @SbxParamField(name = "category")
+    @SbxParamField()
     Category category;
 
     public Product(String name, double price, Category category) {
@@ -33,5 +33,13 @@ public class Product {
         this.price = price;
         this.name = name;
         this.expireAt=new Date();
+    }
+
+    public Product(){}
+
+    @Override
+    public boolean equals(Object obj) {
+        Product product= (Product)obj;
+        return this.price==product.price && this.name.equals(product.name);
     }
 }

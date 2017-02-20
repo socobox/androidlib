@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface SbxParamField {
 
-    String name();
+    String name() default "";
 
 }
