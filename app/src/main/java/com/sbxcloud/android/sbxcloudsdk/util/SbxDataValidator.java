@@ -1,7 +1,6 @@
 package com.sbxcloud.android.sbxcloudsdk.util;
 
-import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxParamField;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

@@ -2,16 +2,15 @@ package com.sbxcloud.android.sbxcloudsdk.util;
 
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxKey;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
 import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxParamField;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
 
 import org.json.JSONObject;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Date;
 
 /**
  * Created by lgguzman on 20/02/17.

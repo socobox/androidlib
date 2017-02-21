@@ -29,6 +29,15 @@ public class SbxAuth {
     private  int domain;
     private  String appKey;
     private String token;
+    private boolean HttpLog;
+
+    public boolean isHttpLog() {
+        return HttpLog;
+    }
+
+    public void setHttpLog(boolean httpLog) {
+        HttpLog = httpLog;
+    }
 
     /**
      * initialize the data for comunicate on sbxcloud.com
@@ -97,6 +106,11 @@ public class SbxAuth {
             throw new SbxConfigException("SbxAuth not initialized");
         }
         return appKey;
+    }
+
+
+    public void resetToken(){
+        token=null;
     }
 
     /**
