@@ -127,7 +127,7 @@ public class SbxModelHelper {
 
         return sbxUrlComposer
                 .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+         //       .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
                 .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
                 .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
                 .addBody(queryBuilder.compile());

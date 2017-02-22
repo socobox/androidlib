@@ -20,7 +20,7 @@ public class Test extends AppCompatActivity {
         setContentView(R.layout.activity_test);
         try {
             //Iniciar la librería con el dominio y el App-key, puede ser en tu custom Application.class
-            SbxAuth.initialize(119, "d4cd3cac-043a-48ab-9d06-18aa4fd23");
+            SbxAuth.initialize(119, "d4cd3cac-043a-48ab-9d06-18aa4fd2");
             //Log http request and response
             SbxAuth.getDefaultSbxAuth().setHttpLog(true);
 

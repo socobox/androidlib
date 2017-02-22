@@ -18,7 +18,7 @@ public interface UrlHelper {
     public static final String HEADER_KEY_ENCODING="Accept-Encoding";
     public static final String HEADER_KEY_CONTENT_TYPE="Content-Type";
     public static final String HEADER_KEY_AUTORIZATION="Authorization";
-    public static final String HEADER_GZIP="gzip";
+  //  public static final String HEADER_GZIP="gzip";
     public static final String HEADER_JSON="application/json";
     public static final String HEADER_BEARER="Bearer ";
     public static final String POST="POST";

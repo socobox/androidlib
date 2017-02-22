@@ -283,8 +283,8 @@ public class SbxAuth {
             }
         }
        return  sbxUrlComposer
-                .addHeader(UrlHelper.HEADER_KEY_APP_KEY,appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING,UrlHelper.HEADER_GZIP);
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY,appKey);
+            //    .addHeader(UrlHelper.HEADER_KEY_ENCODING,UrlHelper.HEADER_GZIP);
     }
 
     public SbxUrlComposer getUrlSigIn(Object o)throws SbxConfigException, SbxAuthException {
@@ -376,8 +376,8 @@ public class SbxAuth {
                 .setUrlParam("login",username)
                 .setUrlParam("name",name)
                 .setUrlParam("domain",domain+"")
-                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP);
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey);
+           //     .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP);
     }
 
 
