@@ -24,7 +24,7 @@ Agregamos la librería como dependencia
 
             dependencies {
                 //...otras dependencias de tu proyeco aquí.....
-                compile 'com.github.ArchivoDigital:androidlib:1.0.5'
+                compile 'com.github.sbxcloud:androidlib:v2.0.0'
             }
             
 Esta librería se basa en annotaciones. Para crear tu propia Clase usuario puedes hacerla así:
