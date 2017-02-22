@@ -60,6 +60,7 @@ public class SbxUrlComposer {
         this.url= UrlHelper.URL_BASE+ url;
         this.type=type;
         header= new HashMap<>();
+        addHeader("User-Agent","AndroidALib");
         body= new JSONObject();
     }
 

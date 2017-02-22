@@ -150,6 +150,10 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
         jsonObject = new JSONObject("{\"_KEY\": \"95979b68-cc4a-416d-46c550380031\",\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":{\"_KEY\": \"laksdf-asdf-234-asdf\",\"description\":\"lacteos\"}}");
         p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
 
+        SbxQueryBuilder sbxQueryBuilder = SbxModelHelper.prepareQueryToDelete(Product.class);
+        sbxQueryBuilder.addDeleteKey(SbxModelHelper.getKeyFromAnnotation(p));
+        System.out.println(SbxModelHelper.getUrlDelete(sbxQueryBuilder));
+
 
 ```
 
@@ -311,6 +315,18 @@ User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.co","123456");
                 for (Product p:products){
                     System.out.printf(p.key);
                 }
+            }
+        });
+
+        product.deleteInBackground(new SbxSimpleResponse<Product>() {
+            @Override
+            public void onError(Exception e) {
+                
+            }
+
+            @Override
+            public void onSuccess(Product tClass) {
+                
             }
         });
 

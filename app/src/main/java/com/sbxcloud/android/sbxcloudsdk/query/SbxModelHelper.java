@@ -3,6 +3,7 @@ package com.sbxcloud.android.sbxcloudsdk.query;
 import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
+import com.sbxcloud.android.sbxcloudsdk.net.model.SbxQuery;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxModelName;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
@@ -210,6 +211,37 @@ public class SbxModelHelper {
         }
         return new SbxQueryBuilder(domain,modelName,page,limit);
 
+    }
+
+    public static SbxQueryBuilder prepareQueryToDelete(Class<?> myClass) throws  Exception{
+        int domain = SbxAuth.getDefaultSbxAuth().getDomain();
+        Annotation annotationClass = myClass.getAnnotation(SbxModelName.class);
+        String modelName="";
+        if(annotationClass instanceof SbxModelName){
+            SbxModelName myAnnotation = (SbxModelName) annotationClass;
+            modelName=myAnnotation.value();
+        }else{
+            throw  new SbxModelException("SbxModelName is required");
+        }
+        return new SbxQueryBuilder(domain,modelName, SbxQueryBuilder.TYPE.DELETE);
+
+    }
+
+    public static SbxUrlComposer getUrlDelete(SbxQueryBuilder sbxQueryBuilder)throws Exception{
+        if(sbxQueryBuilder.getKeysD()==null)
+            throw new SbxModelException("SbxQueryBuilder is not DELETE Type");
+        String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
+        String token = SbxAuth.getDefaultSbxAuth().getToken();
+        SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
+                UrlHelper.URL_DELETE
+                , UrlHelper.POST
+        );
+        return sbxUrlComposer
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
+//                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+//                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+                .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
+                .addBody(sbxQueryBuilder.compile());
     }
 
     public static SbxUrlComposer getUrlQuery(SbxQueryBuilder sbxQueryBuilder) throws  Exception{

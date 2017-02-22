@@ -52,6 +52,33 @@ public class SbxModel {
         });
     }
 
+    public void deleteInBackground(final SbxSimpleResponse simpleResponse)throws  Exception{
+        SbxQueryBuilder sbxQueryBuilder = SbxModelHelper.prepareQueryToDelete(this.getClass());
+        sbxQueryBuilder.addDeleteKey(SbxModelHelper.getKeyFromAnnotation(this));
+        SbxUrlComposer sbxUrlComposer = SbxModelHelper.getUrlDelete(sbxQueryBuilder);
+        Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                simpleResponse.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if(jsonObject.getBoolean("success")) {
+                        simpleResponse.onSuccess(SbxModel.this);
+                    }else{
+                        simpleResponse.onError(new Exception(jsonObject.getString("error")));
+                    }
+                }catch (Exception  e ){
+                    simpleResponse.onError(e);
+                }
+            }
+        });
+    }
+
 
     private void updateKey(JSONObject jsonObject)throws  Exception{
         if(jsonObject.has("keys")) {

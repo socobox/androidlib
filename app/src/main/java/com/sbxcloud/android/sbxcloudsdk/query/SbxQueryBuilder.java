@@ -1,5 +1,6 @@
 package com.sbxcloud.android.sbxcloudsdk.query;
 
+import com.sbxcloud.android.sbxcloudsdk.net.model.SbxQuery;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
 
 import org.json.JSONArray;
@@ -46,10 +47,11 @@ public class SbxQueryBuilder {
         private JSONObject obj;
         private JSONArray required;
         private JSONArray where;
+        private JSONArray keysD;
         private JSONObject currentGroup;
         private JSONArray row;
         public enum TYPE {
-            INSERT, SELECT
+            INSERT, SELECT, DELETE
         }
 
         public enum ANDOR {
@@ -75,8 +77,11 @@ public class SbxQueryBuilder {
             }
         }
 
+    public JSONArray getKeysD() {
+        return keysD;
+    }
 
-        public SbxQueryBuilder(int domain, String rowModel) throws JSONException {
+    public SbxQueryBuilder(int domain, String rowModel) throws JSONException {
             init(domain, rowModel);
         }
 
@@ -104,6 +109,12 @@ public class SbxQueryBuilder {
                     obj.put("row_model", rowModel);
                     row = new JSONArray();
                     break;
+                case DELETE:
+                    obj = new JSONObject();
+                    obj.put("domain", domain);
+                    obj.put("row_model", rowModel);
+                    keysD = new JSONArray();
+                    break;
             }
 
         }
@@ -122,6 +133,13 @@ public class SbxQueryBuilder {
                 row.put(new JSONObject());
             }else{
                 new Exception("it is not insert type");
+            }
+            return this;
+        }
+
+        public SbxQueryBuilder addDeleteKey(String key){
+            if(keysD!=null){
+                keysD.put(key);
             }
             return this;
         }
@@ -269,23 +287,33 @@ public class SbxQueryBuilder {
             return obj;
         }
 
-        public JSONObject compile() throws JSONException {
+        public JSONObject compile() throws Exception {
 
             if(row==null) {
-                if (currentGroup.getJSONArray("GROUP").length() > 0) {
+                if (currentGroup!=null && currentGroup.getJSONArray("GROUP").length() > 0) {
                     where.put(currentGroup);
                 }
 
-                if (where.length() > 0) {
+                if (where!=null && where.length() > 0) {
                     obj.put("where", where);
                 }
 
-                if (required.length() > 0) {
+                if (required!=null && required.length() > 0) {
                     obj.put("require", required);
                 }
 
-                if (fetch.length() > 0) {
+                if (fetch!=null && fetch.length() > 0) {
                     obj.put("fetch", fetch);
+                }
+
+                if (keysD!=null){
+                    if(keysD.length()>0){
+                        JSONObject jsonObject= new JSONObject();
+                        jsonObject.put("keys",keysD);
+                        obj.put("where",jsonObject);
+                    }else{
+                        throw  new Exception("A Key is required");
+                    }
                 }
             }else{
                 if (row.length() > 0) {
