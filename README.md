@@ -249,7 +249,7 @@ public class Product extends SbxModel {
 De esta forma puedes crear objetos en la nube de esta forma:
 
 ```java
-User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.co","123456");
+User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.com","123456");
         user.signUpInBackground(new SbxSimpleResponse<User>() {
             @Override
             public void onError(Exception e) {
