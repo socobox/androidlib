@@ -20,7 +20,7 @@ public class Test extends AppCompatActivity {
         setContentView(R.layout.activity_test);
         try {
             //Iniciar la librería con el dominio y el App-key, puede ser en tu custom Application.class
-            SbxAuth.initialize(119, "d4cd3cac-043a-48ab-9d06-18aa4fd2");
+            SbxAuth.initialize(110, "d4cd3cac-043a-48ab-9d06-18aa4fd23cbd");
             //Log http request and response
             SbxAuth.getDefaultSbxAuth().setHttpLog(true);
 
@@ -48,6 +48,18 @@ public class Test extends AppCompatActivity {
                                 //Do something qith category1
                                 try {
                                     System.out.println(category1.key);
+                                    Product produc = new Product("leche", 13.00, category);
+                                    produc.saveInBackground(new SbxSimpleResponse<Product>() {
+                                         @Override
+                                         public void onError(Exception e) {
+                                             Log.e("ERROR", e.getMessage());
+                                             e.printStackTrace();
+                                         }
+                                        @Override
+                                        public void onSuccess(Product product1) {
+                                            System.out.println(product1.key);
+                                        }
+                                    });
                                     Product product = new Product("leche", 13.00, category);
                                     product.saveInBackground(new SbxSimpleResponse<Product>() {
                                         @Override
@@ -85,8 +97,25 @@ public class Test extends AppCompatActivity {
                                                                 public void onSuccess(List<Product> products) {
                                                                         //do something with products
                                                                     for (Product p:products){
-                                                                        Log.e("WUERY",p.key);
-                                                                        System.out.printf(p.key);
+                                                                        if(p.name.equals("queso")){
+                                                                            try {
+                                                                                p.deleteInBackground(new SbxSimpleResponse<Product>() {
+                                                                                    @Override
+                                                                                    public void onError(Exception e) {
+                                                                                        Log.e("ERROR",e.getMessage());
+                                                                                        e.printStackTrace();
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onSuccess(Product tClass) {
+                                                                                        Log.e("ELIMINADO",tClass.name);
+                                                                                    }
+                                                                                });
+                                                                            }catch (Exception ex){
+                                                                                Log.e("ERROR",ex.getMessage());
+                                                                                ex.printStackTrace();
+                                                                            }
+                                                                        }
                                                                     }
                                                                 }
                                                             });
