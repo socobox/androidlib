@@ -128,13 +128,13 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
 
         //insertar un modelo
         Category category = new Category("lacteos");
-        System.out.println(SbxModelHelper.getUrlinsertRow(category));
+        System.out.println(SbxModelHelper.getUrlInsertOrUpdateRow(category));
         //add manually the response key to the category
         category.key="laksdf-asdf-234-asdf";
 
         //insertar un modelo con referencia
         Product product= new Product("leche",13.00,category);
-        System.out.println(SbxModelHelper.getUrlinsertRow(product));
+        System.out.println(SbxModelHelper.getUrlInsertOrUpdateRow(product));
 
         //Buscar los primeros 100 productos cuyo precio sea menor de 40
         SbxQueryBuilder sbxQueryBuilder= SbxModelHelper.prepareQuery(Product.class,1,100);
@@ -149,5 +149,175 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
         //crea objeto incluso si hace referencia a otro
         jsonObject = new JSONObject("{\"_KEY\": \"95979b68-cc4a-416d-46c550380031\",\"price\":13,\"description\":\"leche\",\"expireAt\":\"2017-02-20T20:45:36.756Z\",\"category\":{\"_KEY\": \"laksdf-asdf-234-asdf\",\"description\":\"lacteos\"}}");
         p= (Product) SbxMagicComposer.getSbxModel(jsonObject,Product.class,0);
+
+
 ```
+
+
+Si deseas, puedes utilizar nuestras clases para mayor facilidad, puedes crear tu custom user heredando de SbxUser, y tus custom modelos heredando de SbxModel de esta forma:
+
+```java
+public class User extends SbxUser {
+
+    @SbxNameField
+    String name;
+
+    @SbxUsernameField
+    String username;
+
+    @SbxEmailField
+    String email;
+
+    @SbxPasswordField
+    String password;
+
+    @SbxAuthToken
+    String token;
+
+
+
+    public User(String name, String username, String email, String password) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+}
+```
+
+```java
+@SbxModelName("Category")
+public class Category extends SbxModel {
+
+    @SbxKey
+    String key;
+
+    @SbxParamField(name = "description")
+    String name;
+
+
+    public Category(String name) {
+        this.name = name;
+    }
+
+    public Category(){}
+}
+```
+
+```java
+
+@SbxModelName("Product")
+public class Product extends SbxModel {
+
+    @SbxKey
+    String key;
+
+    @SbxParamField(name = "description")
+    String name;
+
+    @SbxParamField()
+    double price;
+
+    @SbxParamField()
+    Date expireAt;
+
+    @SbxParamField()
+    Category category;
+
+    public Product(String name, double price, Category category) {
+        this.category = category;
+        this.price = price;
+        this.name = name;
+        this.expireAt=new Date();
+    }
+
+    public Product(){}
+
+    @Override
+    public boolean equals(Object obj) {
+        Product product= (Product)obj;
+        return this.price==product.price && this.name.equals(product.name) &&
+                this.category.key.equals(product.category.key);
+    }
+}
+```
+
+De esta forma puedes crear objetos en la nube de esta forma:
+
+```java
+User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.co","123456");
+        user.signUpInBackground(new SbxSimpleResponse<User>() {
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public  void onSuccess(User user) {
+                System.out.println(user.token);
+            }
+        });
+        user.logInBackground(new SbxSimpleResponse<User>() {
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public  void onSuccess(User user) {
+                System.out.println();
+            }
+        });
+
+        final Category category = new Category("lacteos");
+        category.saveInBackground(new SbxSimpleResponse<Category>() {
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Category category1) {
+                //Do something qith category1
+                System.out.println(category1.key);
+            }
+        });
+        Product product= new Product("leche",13.00,category);
+        product.saveInBackground(new SbxSimpleResponse<Product>() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onSuccess(Product product1) {
+                //Do something qith product1
+                System.out.printf(product1.key);
+
+            }
+        });
+        SbxQuery queryProduct= new SbxQuery(Product.class);
+        queryProduct.whereLessThan("price",40);
+        queryProduct.findInBackground(new SbxArrayResponse<Product>() {
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onSuccess(List<Product> products) {
+                    //do something with products
+                for (Product p:products){
+                    System.out.printf(p.key);
+                }
+            }
+        });
+
+        user.logOut();
+```
+
+
+
+
 

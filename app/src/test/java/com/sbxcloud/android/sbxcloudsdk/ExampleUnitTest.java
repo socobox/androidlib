@@ -92,64 +92,64 @@ public class ExampleUnitTest {
                 System.out.println(user.token);
             }
         });
-//        user.logInBackground(new SbxSimpleResponse<User>() {
-//            @Override
-//            public void onError(Exception e) {
-//                System.out.println(e.getMessage());
-//            }
-//
-//            @Override
-//            public  void onSuccess(User user) {
-//                System.out.println();
-//            }
-//        });
+        user.logInBackground(new SbxSimpleResponse<User>() {
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
 
-//        final Category category = new Category("lacteos");
-//        category.saveInBackground(new SbxSimpleResponse<Category>() {
-//            @Override
-//            public void onError(Exception e) {
-//                System.out.println(e.getMessage());
-//            }
-//
-//            @Override
-//            public void onSuccess(Category category1) {
-//                //Do something qith category1
-//                System.out.println(category1.key);
-//            }
-//        });
-//        Product product= new Product("leche",13.00,category);
-//        product.saveInBackground(new SbxSimpleResponse<Product>() {
-//            @Override
-//            public void onError(Exception e) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccess(Product product1) {
-//                //Do something qith product1
-//                System.out.printf(product1.key);
-//
-//            }
-//        });
-//        SbxQuery queryProduct= new SbxQuery(Product.class);
-//        queryProduct.whereLessThan("price",40);
-//        queryProduct.findInBackground(new SbxArrayResponse<Product>() {
-//
-//            @Override
-//            public void onError(Exception e) {
-//                System.out.println(e.getMessage());
-//            }
-//
-//            @Override
-//            public void onSuccess(List<Product> products) {
-//                    //do something with products
-//                for (Product p:products){
-//                    System.out.printf(p.key);
-//                }
-//            }
-//        });
-//
-//        user.logOut();
+            @Override
+            public  void onSuccess(User user) {
+                System.out.println();
+            }
+        });
+
+        final Category category = new Category("lacteos");
+        category.saveInBackground(new SbxSimpleResponse<Category>() {
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Category category1) {
+                //Do something qith category1
+                System.out.println(category1.key);
+            }
+        });
+        Product product= new Product("leche",13.00,category);
+        product.saveInBackground(new SbxSimpleResponse<Product>() {
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+            @Override
+            public void onSuccess(Product product1) {
+                //Do something qith product1
+                System.out.printf(product1.key);
+
+            }
+        });
+        SbxQuery queryProduct= new SbxQuery(Product.class);
+        queryProduct.whereLessThan("price",40);
+        queryProduct.findInBackground(new SbxArrayResponse<Product>() {
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onSuccess(List<Product> products) {
+                    //do something with products
+                for (Product p:products){
+                    System.out.printf(p.key);
+                }
+            }
+        });
+
+        user.logOut();
 
 
 
