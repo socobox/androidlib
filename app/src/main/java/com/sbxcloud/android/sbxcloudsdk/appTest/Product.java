@@ -1,4 +1,4 @@
-package com.sbxcloud.android.sbxcloudsdk;
+package com.sbxcloud.android.sbxcloudsdk.appTest;
 
 import com.sbxcloud.android.sbxcloudsdk.net.model.SbxModel;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;

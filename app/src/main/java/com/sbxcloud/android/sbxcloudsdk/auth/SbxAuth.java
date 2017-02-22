@@ -29,6 +29,15 @@ public class SbxAuth {
     private  int domain;
     private  String appKey;
     private String token;
+    private boolean HttpLog;
+
+    public boolean isHttpLog() {
+        return HttpLog;
+    }
+
+    public void setHttpLog(boolean httpLog) {
+        HttpLog = httpLog;
+    }
 
     /**
      * initialize the data for comunicate on sbxcloud.com
@@ -97,6 +106,11 @@ public class SbxAuth {
             throw new SbxConfigException("SbxAuth not initialized");
         }
         return appKey;
+    }
+
+
+    public void resetToken(){
+        token=null;
     }
 
     /**
@@ -269,8 +283,8 @@ public class SbxAuth {
             }
         }
        return  sbxUrlComposer
-                .addHeader(UrlHelper.HEADER_KEY_APP_KEY,appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING,UrlHelper.HEADER_GZIP);
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY,appKey);
+            //    .addHeader(UrlHelper.HEADER_KEY_ENCODING,UrlHelper.HEADER_GZIP);
     }
 
     public SbxUrlComposer getUrlSigIn(Object o)throws SbxConfigException, SbxAuthException {
@@ -362,8 +376,8 @@ public class SbxAuth {
                 .setUrlParam("login",username)
                 .setUrlParam("name",name)
                 .setUrlParam("domain",domain+"")
-                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP);
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey);
+           //     .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP);
     }
 
 

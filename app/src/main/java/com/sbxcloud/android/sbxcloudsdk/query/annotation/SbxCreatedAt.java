@@ -1,4 +1,4 @@
-package com.sbxcloud.android.sbxcloudsdk.query;
+package com.sbxcloud.android.sbxcloudsdk.query.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface SbxUpdatedAt {
+public @interface SbxCreatedAt {
 }

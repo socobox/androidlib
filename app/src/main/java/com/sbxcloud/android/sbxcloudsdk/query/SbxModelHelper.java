@@ -1,23 +1,17 @@
 package com.sbxcloud.android.sbxcloudsdk.query;
 
 import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxEmailField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxNameField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxPasswordField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxUsernameField;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
-import com.sbxcloud.android.sbxcloudsdk.exception.SbxConfigException;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxModelName;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 import com.sbxcloud.android.sbxcloudsdk.util.UrlHelper;
 
-import org.json.JSONException;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.Date;
 
 /**
@@ -26,13 +20,13 @@ import java.util.Date;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SbxModelHelper {
 
-    public static SbxUrlComposer getUrlinsertRow(Object o)throws Exception {
+    public static SbxUrlComposer getUrlInsertOrUpdateRow(Object o)throws Exception {
 
         int domain = SbxAuth.getDefaultSbxAuth().getDomain();
         String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
         String token = SbxAuth.getDefaultSbxAuth().getToken();
+        String key=null;
         Class<?> myClass = o.getClass();
-
         if(!hasKeyAnnotation(myClass)){
             throw new SbxModelException("SbxKey is required");
         }
@@ -45,13 +39,17 @@ public class SbxModelHelper {
             throw  new SbxModelException("SbxModelName is required");
         }
 
+        key=getKeyFromAnnotation(o);
         SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
-                UrlHelper.URL_INSERT
+                key==null||key.equals("")? UrlHelper.URL_INSERT:UrlHelper.URL_UPDATE
                 , UrlHelper.POST
         );
-        SbxQueryBuilder queryBuilder = new SbxQueryBuilder(domain,modelName, SbxQueryBuilder.TYPE.INSERT);
-        queryBuilder.insertNewEmptyRow();
 
+        SbxQueryBuilder queryBuilder = new SbxQueryBuilder(domain, modelName, SbxQueryBuilder.TYPE.INSERT);
+
+        queryBuilder.insertNewEmptyRow();
+        if(!(key==null||key.equals("")))
+            queryBuilder.insertFieldLastRow("_KEY",key);
         final Field[] variables = myClass.getDeclaredFields();
 
         for (final Field variable : variables) {
@@ -66,8 +64,11 @@ public class SbxModelHelper {
                     String variabletype=variable.getGenericType().toString();
                     switch (variabletype){
                         case "class java.lang.String":{
-                            String data=(String)variable.get(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                            Object os=variable.get(o);
+                            if(os!=null) {
+                                String data = (String) os;
+                                queryBuilder.insertFieldLastRow(name, data);
+                            }
                             break;
                         }
                         case "int":{
@@ -91,8 +92,11 @@ public class SbxModelHelper {
                             break;
                         }
                         case "class java.util.Date":{
-                            Date data=(Date)variable.get(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                            Object os=variable.get(o);
+                            if(os!=null) {
+                                Date data = (Date) os;
+                                queryBuilder.insertFieldLastRow(name, data);
+                            }
                             break;
                         }
                         case "boolean":{
@@ -101,8 +105,10 @@ public class SbxModelHelper {
                             break;
                         }
                         default:{
-                            Object data=variable.get(o);
-                            queryBuilder.insertFieldLastRow(name,getKeyFromAnnotation(data));
+                            Object os=variable.get(o);
+                            if(os!=null) {
+                                queryBuilder.insertFieldLastRow(name, getKeyFromAnnotation(os));
+                            }
                             break;
                         }
 
@@ -121,14 +127,14 @@ public class SbxModelHelper {
 
         return sbxUrlComposer
                 .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+         //       .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
                 .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
                 .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
                 .addBody(queryBuilder.compile());
     }
 
 
-    private static  String getKeyFromAnnotation(Object o) throws Exception{
+    public static  String getKeyFromAnnotation(Object o) throws Exception{
         Class<?> myClass = o.getClass();
         final Field[] variables = myClass.getDeclaredFields();
 
@@ -140,9 +146,36 @@ public class SbxModelHelper {
                 try {
                     boolean isAccessible=variable.isAccessible();
                     variable.setAccessible(true);
-                    String s= (String)variable.get(o);
+                    Object object=variable.get(o);
+                    if(object==null){
+                        return null;
+                    }
+                    String s= (String)object;
                     variable.setAccessible(isAccessible);
                     return s;
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+            }
+        }
+        throw  new SbxModelException("no Key present on object");
+    }
+
+    public static  void setKeyFromAnnotation(Object o, String key) throws Exception{
+        Class<?> myClass = o.getClass();
+        final Field[] variables = myClass.getDeclaredFields();
+
+        for (final Field variable : variables) {
+
+            final Annotation annotation = variable.getAnnotation(SbxKey.class);
+
+            if (annotation != null && annotation instanceof SbxKey) {
+                try {
+                    boolean isAccessible=variable.isAccessible();
+                    variable.setAccessible(true);
+                    variable.set(o,key);
+                    variable.setAccessible(isAccessible);
+                    return;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -188,8 +221,8 @@ public class SbxModelHelper {
         );
         return sbxUrlComposer
                 .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
-                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
-                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+//                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+//                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
                 .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
                 .addBody(sbxQueryBuilder.compile());
     }
