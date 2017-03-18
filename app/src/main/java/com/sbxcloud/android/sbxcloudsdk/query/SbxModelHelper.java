@@ -28,7 +28,7 @@ public class SbxModelHelper {
         String token = SbxAuth.getDefaultSbxAuth().getToken();
         String key=null;
         Class<?> myClass = o.getClass();
-        if(!hasKeyAnnotation(myClass)){
+        if(!SbxDataValidator.hasKeyAnnotation(myClass)){
             throw new SbxModelException("SbxKey is required");
         }
         Annotation annotationClass = myClass.getAnnotation(SbxModelName.class);
@@ -162,28 +162,7 @@ public class SbxModelHelper {
         throw  new SbxModelException("no Key present on object");
     }
 
-    public static  void setKeyFromAnnotation(Object o, String key) throws Exception{
-        Class<?> myClass = o.getClass();
-        final Field[] variables = myClass.getDeclaredFields();
 
-        for (final Field variable : variables) {
-
-            final Annotation annotation = variable.getAnnotation(SbxKey.class);
-
-            if (annotation != null && annotation instanceof SbxKey) {
-                try {
-                    boolean isAccessible=variable.isAccessible();
-                    variable.setAccessible(true);
-                    variable.set(o,key);
-                    variable.setAccessible(isAccessible);
-                    return;
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new SbxAuthException(e);
-                }
-            }
-        }
-        throw  new SbxModelException("no Key present on object");
-    }
 
     public static SbxQueryBuilder prepareQuery(Class<?> myClass) throws  Exception{
         int domain = SbxAuth.getDefaultSbxAuth().getDomain();
@@ -259,16 +238,20 @@ public class SbxModelHelper {
                 .addBody(sbxQueryBuilder.compile());
     }
 
-    public static boolean hasKeyAnnotation(Class<?> myClass){
-        final Field[] variables = myClass.getDeclaredFields();
-
-        for (final Field variable : variables) {
-
-            final Annotation annotation = variable.getAnnotation(SbxKey.class);
-            if (annotation != null && annotation instanceof SbxKey) {
-                return true;
-            }
-        }
-        return false;
+    public static SbxUrlComposer getUrlQueryKeys(SbxQueryBuilder sbxQueryBuilder, String [] keys) throws  Exception{
+        String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
+        String token = SbxAuth.getDefaultSbxAuth().getToken();
+        SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
+                UrlHelper.URL_FIND
+                , UrlHelper.POST
+        );
+        return sbxUrlComposer
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
+//                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+//                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+                .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
+                .addBody(sbxQueryBuilder.compileWithKeys(keys));
     }
+
+
 }

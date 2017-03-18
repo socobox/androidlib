@@ -1,5 +1,9 @@
 package com.sbxcloud.android.sbxcloudsdk.util;
 
+import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
+import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxModelName;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
 
 import java.lang.annotation.Annotation;
@@ -42,5 +46,53 @@ public class SbxDataValidator {
                 }
         return name;
 
+    }
+
+    public static boolean hasKeyAnnotation(Class<?> myClass){
+        final Field[] variables = myClass.getDeclaredFields();
+
+        for (final Field variable : variables) {
+
+            final Annotation annotation = variable.getAnnotation(SbxKey.class);
+            if (annotation != null && annotation instanceof SbxKey) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static  void setKeyFromAnnotation(Object o, String key) throws Exception{
+        Class<?> myClass = o.getClass();
+        final Field[] variables = myClass.getDeclaredFields();
+
+        for (final Field variable : variables) {
+
+            final Annotation annotation = variable.getAnnotation(SbxKey.class);
+
+            if (annotation != null && annotation instanceof SbxKey) {
+                try {
+                    boolean isAccessible=variable.isAccessible();
+                    variable.setAccessible(true);
+                    variable.set(o,key);
+                    variable.setAccessible(isAccessible);
+                    return;
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+            }
+        }
+        throw  new SbxModelException("no Key present on object");
+    }
+
+
+    public static  String getAnnotationModelNameFromVariable(Field variable) throws Exception{
+
+        Annotation annotationClass = variable.getType().getAnnotation(SbxModelName.class);
+        String modelName="";
+        if(annotationClass instanceof SbxModelName){
+            SbxModelName myAnnotation = (SbxModelName) annotationClass;
+            modelName=myAnnotation.value();
+        }
+        return modelName;
     }
 }

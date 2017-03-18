@@ -1,5 +1,8 @@
 package com.sbxcloud.android.sbxcloudsdk.net.auth;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
 import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxAuthToken;
 import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxUsernameField;
