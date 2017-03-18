@@ -333,6 +333,41 @@ User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.co","123456");
         user.logOut();
 ```
 
+Incluso puedes hacer fecth a los objetos
+
+```java
+
+    Product p = new Product();
+    p.key="1d3cd5e6-21a8-4de8-97c9-f4177aa6bad4";
+    p.fetchInBackground(new SbxSimpleResponse<Product>() {
+        @Override
+        public void onError(Exception e) {
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onSuccess(Product product) {
+            Log.e("producto",product.name);
+        }
+    });
+    String []properties={"category"};
+    p.fetchInBackground(new SbxSimpleResponse<Product>() {
+        @Override
+        public void onError(Exception e) {
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onSuccess(Product product) {
+            Log.e("producto",product.name);
+            Log.e("categoria",product.category.name);
+        }
+    },properties);
+
+```
+
+
+
 
 
 

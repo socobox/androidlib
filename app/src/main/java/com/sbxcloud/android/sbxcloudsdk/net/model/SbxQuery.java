@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,13 +37,13 @@ public class SbxQuery{
     public SbxQuery(Class<?> clazz) throws Exception{
         this.mClazz=clazz;
         sbxQueryBuilder= SbxModelHelper.prepareQuery(clazz);
-        sbxQueryBuilder.insertNewEmptyRow();
+       // sbxQueryBuilder.insertNewEmptyRow();
     }
 
     public SbxQuery(Class<?> clazz, int page, int limit) throws Exception{
         this.mClazz=clazz;
         sbxQueryBuilder= SbxModelHelper.prepareQuery(clazz, page, limit);
-        sbxQueryBuilder.insertNewEmptyRow();
+       // sbxQueryBuilder.insertNewEmptyRow();
     }
 
     public SbxQuery addAND(){
@@ -80,6 +81,11 @@ public class SbxQuery{
         return   this;
     }
 
+    public SbxQuery fetch(String propieties[]) throws JSONException{
+        sbxQueryBuilder.fetch(propieties);
+        return   this;
+    }
+
     public <T> void findInBackground(final SbxArrayResponse  <T> sbxArrayResponse) throws Exception{
         SbxUrlComposer sbxUrlComposer=SbxModelHelper.getUrlQuery(sbxQueryBuilder);
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
@@ -99,8 +105,15 @@ public class SbxQuery{
                        List <T>  list= new ArrayList<T>();
                         JSONArray jsonArray=jsonObject.getJSONArray("results");
                         for (int i=0;i<jsonArray.length();i++){
-                            list.add((T)SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i),mClazz,0));
+                            if(jsonObject.has("fetched_results")) {
+                                list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0,jsonObject.getJSONObject("fetched_results")));
+                            }else{
+                                list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0));
+                            }
                         }
+
+
+
                         sbxArrayResponse.onSuccess(list);
 
 
@@ -115,6 +128,7 @@ public class SbxQuery{
         });
 
     }
+
 
 
 
