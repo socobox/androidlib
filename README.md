@@ -24,7 +24,7 @@ Agregamos la librería como dependencia
 
             dependencies {
                 //...otras dependencias de tu proyeco aquí.....
-                compile 'com.github.sbxcloud:androidlib:v2.0.0'
+                compile 'com.github.sbxcloud:androidlib:v2.0.1'
             }
             
 Esta librería se basa en annotaciones. Para crear tu propia Clase usuario puedes hacerla así:
@@ -113,7 +113,7 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
 
 ```java
         //Iniciar la librería con el dominio y el App-key, puede ser en tu custom Application.class
-        SbxAuth.initialize(80,"KASDFasd-asdfadsf-asdfadsf-asdf");
+         SbxAuth.initializeIfIsNecessary(Context,110,"d4cd3cac-043a-48ab-9d06-18aa4fd23cbd");
 
         //Datos
         //Registrar un usuario
