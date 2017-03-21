@@ -24,7 +24,7 @@ Agregamos la librería como dependencia
 
             dependencies {
                 //...otras dependencias de tu proyeco aquí.....
-                compile 'com.github.sbxcloud:androidlib:v2.0.1'
+                compile 'com.github.sbxcloud:androidlib:v2.0.3'
             }
             
 Esta librería se basa en annotaciones. Para crear tu propia Clase usuario puedes hacerla así:
@@ -158,7 +158,7 @@ Luego, puedes conectarte con tus datos utilizando el cliente hhtp que consideres
 ```
 
 
-Si deseas, puedes utilizar nuestras clases para mayor facilidad, puedes crear tu custom user heredando de SbxUser, y tus custom modelos heredando de SbxModel de esta forma:
+Si deseas, puedes utilizar nuestras clases para mayor facilidad, puedes crear tu custom user heredando de SbxUser, y tus custom modelos heredando de SbxModel (Todas las clases que hereden deben tener un constructor vacío) de esta forma:
 
 ```java
 public class User extends SbxUser {
@@ -178,7 +178,7 @@ public class User extends SbxUser {
     @SbxAuthToken
     String token;
 
-
+    public User(){}
 
     public User(String name, String username, String email, String password) {
         this.name = name;

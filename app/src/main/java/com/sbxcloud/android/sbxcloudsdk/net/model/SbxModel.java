@@ -59,9 +59,6 @@ public class SbxModel {
     public void fetchInBackground(final SbxSimpleResponse simpleResponse)throws  Exception{
 
         String []keys = {SbxModelHelper.getKeyFromAnnotation(this)};
-        for (String key:keys){
-            Log.e("key",key);
-        }
         SbxQueryBuilder sbxQueryBuilder = (new SbxQuery(this.getClass())).sbxQueryBuilder;
         SbxUrlComposer sbxUrlComposer = SbxModelHelper.getUrlQueryKeys(sbxQueryBuilder, keys);
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
