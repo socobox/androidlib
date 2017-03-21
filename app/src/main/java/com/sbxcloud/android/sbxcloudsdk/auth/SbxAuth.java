@@ -47,6 +47,11 @@ public class SbxAuth {
         HttpLog = httpLog;
     }
 
+
+    public Context getContext() {
+        return context;
+    }
+
     /**
      * initialize the data for comunicate on sbxcloud.com
      * @param domain the id of the domain on sbxcloud.com
