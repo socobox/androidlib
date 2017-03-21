@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import okhttp3.Call;
@@ -83,7 +84,6 @@ public class SbxUser {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     if(jsonObject.getBoolean("success")) {
                         updateUser(jsonObject);
-                        SbxAuth.getDefaultSbxAuth().refreshToken(sbxUser);
                         simpleResponse.onSuccess(SbxUser.this);
                     }else{
                         simpleResponse.onError(new Exception(jsonObject.getString("error")));
@@ -114,7 +114,7 @@ public class SbxUser {
         final Field[] variables = myClass.getDeclaredFields();
         for (final Field variable : variables) {
 
-             Annotation annotation = variable.getAnnotation(SbxAuthToken.class);
+            Annotation annotation = variable.getAnnotation(SbxAuthToken.class);
 
             if (annotation != null && annotation instanceof SbxAuthToken) {
                 try {
@@ -122,13 +122,12 @@ public class SbxUser {
                     variable.setAccessible(true);
                     variable.set(SbxUser.this,token);
                     variable.setAccessible(isAccessible);
-                    break;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
             }
 
-             annotation = variable.getAnnotation(SbxEmailField.class);
+            annotation = variable.getAnnotation(SbxEmailField.class);
 
             if (annotation != null && annotation instanceof SbxEmailField) {
                 try {
@@ -136,7 +135,6 @@ public class SbxUser {
                     variable.setAccessible(true);
                     variable.set(SbxUser.this,email);
                     variable.setAccessible(isAccessible);
-                    break;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -150,7 +148,6 @@ public class SbxUser {
                     variable.setAccessible(true);
                     variable.set(SbxUser.this,login);
                     variable.setAccessible(isAccessible);
-                    break;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -164,7 +161,6 @@ public class SbxUser {
                     variable.setAccessible(true);
                     variable.set(SbxUser.this,name);
                     variable.setAccessible(isAccessible);
-                    break;
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -175,16 +171,18 @@ public class SbxUser {
         this.memberOf=userJson.getJSONArray("member_of");
         this.homeFolder=userJson.getString("home_folder_key");
         sbxUser=SbxUser.this;
+        SbxAuth.getDefaultSbxAuth().refreshToken(SbxUser.this);
     }
 
-    public static SbxUser  getCurrentSbxUser()throws Exception {
+    public static SbxUser getCurrentSbxUser(Class<?> clazz)throws Exception {
         if(sbxUser==null) {
             SharedPreferences sharedPreferences = SbxAuth.getDefaultSbxAuth().getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
             String s=sharedPreferences.getString(FILE_NAME_USER,"");
             if(s.equals("")) {
                 return null;
             }
-            sbxUser= new SbxUser();
+            Constructor<?> ctor = clazz.getConstructor();
+            sbxUser = (SbxUser) ctor.newInstance();
             sbxUser.updateUser(new JSONObject(s));
         }
 
@@ -203,4 +201,3 @@ public class SbxUser {
         return memberOf;
     }
 }
-
