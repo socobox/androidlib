@@ -20,10 +20,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by lgguzman on 21/02/17.
@@ -37,13 +45,13 @@ public class SbxQuery{
     public SbxQuery(Class<?> clazz) throws Exception{
         this.mClazz=clazz;
         sbxQueryBuilder= SbxModelHelper.prepareQuery(clazz);
-       // sbxQueryBuilder.insertNewEmptyRow();
+        // sbxQueryBuilder.insertNewEmptyRow();
     }
 
     public SbxQuery(Class<?> clazz, int page, int limit) throws Exception{
         this.mClazz=clazz;
         sbxQueryBuilder= SbxModelHelper.prepareQuery(clazz, page, limit);
-       // sbxQueryBuilder.insertNewEmptyRow();
+        // sbxQueryBuilder.insertNewEmptyRow();
     }
 
     public SbxQuery addAND(){
@@ -52,7 +60,7 @@ public class SbxQuery{
     }
 
     public SbxQuery addOR(){
-       sbxQueryBuilder.addOR();
+        sbxQueryBuilder.addOR();
         return  this;
     }
 
@@ -102,7 +110,7 @@ public class SbxQuery{
                     JSONObject jsonObject= new JSONObject(s);
                     if(jsonObject.getBoolean("success")) {
 
-                       List <T>  list= new ArrayList<T>();
+                        List <T>  list= new ArrayList<T>();
                         JSONArray jsonArray=jsonObject.getJSONArray("results");
                         for (int i=0;i<jsonArray.length();i++){
                             if(jsonObject.has("fetched_results")) {
@@ -129,6 +137,47 @@ public class SbxQuery{
 
     }
 
+    public <T> Single<List<T>> find(Class<T> type) throws Exception{
+        SbxUrlComposer sbxUrlComposer=SbxModelHelper.getUrlQuery(sbxQueryBuilder);
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<List<T>>() {
+            @Override
+            public void subscribe(final SingleEmitter<List<T>> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response= ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getBoolean("success")) {
+
+
+                                List <T>  list= new ArrayList<T>();
+                                JSONArray jsonArray=jsonObject.getJSONArray("results");
+                                for (int i=0;i<jsonArray.length();i++){
+                                    if(jsonObject.has("fetched_results")) {
+                                        list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0,jsonObject.getJSONObject("fetched_results")));
+                                    }else{
+                                        list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0));
+                                    }
+                                }
+
+                                e.onSuccess(list);
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+                    }
+                }).start();
+
+            }
+        });
+
+    }
 
 
 

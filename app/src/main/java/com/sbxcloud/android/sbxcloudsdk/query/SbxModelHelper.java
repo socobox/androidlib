@@ -14,12 +14,135 @@ import com.sbxcloud.android.sbxcloudsdk.util.UrlHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by lgguzman on 19/02/17.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SbxModelHelper {
+
+    public static <T>SbxUrlComposer getUrlInsertOrUpdateRows(List<T> objects)throws Exception {
+
+        if(objects.isEmpty())
+            throw new SbxModelException("Array can not be empty");
+        int domain = SbxAuth.getDefaultSbxAuth().getDomain();
+        String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
+        String token = SbxAuth.getDefaultSbxAuth().getToken();
+        String key=null;
+
+        Object of=objects.get(0);
+        key=getKeyFromAnnotation(of);
+        Class<?> myClass = of.getClass();
+        if(!SbxDataValidator.hasKeyAnnotation(myClass)){
+            throw new SbxModelException("SbxKey is required");
+        }
+        Annotation annotationClass = myClass.getAnnotation(SbxModelName.class);
+        String modelName="";
+        if(annotationClass instanceof SbxModelName){
+            SbxModelName myAnnotation = (SbxModelName) annotationClass;
+            modelName=myAnnotation.value();
+        }else{
+            throw  new SbxModelException("SbxModelName is required");
+        }
+
+        SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
+                key==null||key.equals("")? UrlHelper.URL_INSERT:UrlHelper.URL_UPDATE
+                , UrlHelper.POST
+        );
+        SbxQueryBuilder queryBuilder = new SbxQueryBuilder(domain, modelName, SbxQueryBuilder.TYPE.INSERT);
+
+
+        for(Object o: objects) {
+
+            key=getKeyFromAnnotation(o);
+            queryBuilder.insertNewEmptyRow();
+            if (!(key == null || key.equals("")))
+                queryBuilder.insertFieldLastRow("_KEY", key);
+            final Field[] variables = myClass.getDeclaredFields();
+
+            for (final Field variable : variables) {
+
+                final Annotation annotation = variable.getAnnotation(SbxParamField.class);
+
+                if (annotation != null && annotation instanceof SbxParamField) {
+                    try {
+                        boolean isAccessible = variable.isAccessible();
+                        variable.setAccessible(true);
+                        String name = SbxDataValidator.getAnnotationName(variable, annotation);
+                        String variabletype = variable.getGenericType().toString();
+                        switch (variabletype) {
+                            case "class java.lang.String": {
+                                Object os = variable.get(o);
+                                if (os != null) {
+                                    String data = (String) os;
+                                    queryBuilder.insertFieldLastRow(name, data);
+                                }
+                                break;
+                            }
+                            case "int": {
+                                int data = variable.getInt(o);
+                                queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "long": {
+                                long data = variable.getLong(o);
+                                queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "double": {
+                                double data = variable.getDouble(o);
+                                queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "float": {
+                                float data = variable.getFloat(o);
+                                queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "class java.util.Date": {
+                                Object os = variable.get(o);
+                                if (os != null) {
+                                    Date data = (Date) os;
+                                    queryBuilder.insertFieldLastRow(name, data);
+                                }
+                                break;
+                            }
+                            case "boolean": {
+                                boolean data = variable.getBoolean(o);
+                                queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            default: {
+                                Object os = variable.get(o);
+                                if (os != null) {
+                                    queryBuilder.insertFieldLastRow(name, getKeyFromAnnotation(os));
+                                }
+                                break;
+                            }
+
+
+                        }
+
+                        variable.setAccessible(isAccessible);
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        throw new SbxAuthException(e);
+                    }
+
+                }
+
+
+            }
+        }
+
+        return sbxUrlComposer
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
+                //       .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+                .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
+                .addBody(queryBuilder.compile());
+    }
 
     public static SbxUrlComposer getUrlInsertOrUpdateRow(Object o)throws Exception {
 
@@ -128,7 +251,7 @@ public class SbxModelHelper {
 
         return sbxUrlComposer
                 .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
-         //       .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+                //       .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
                 .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
                 .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
                 .addBody(queryBuilder.compile());
