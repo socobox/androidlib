@@ -24,7 +24,7 @@ Agregamos la librería como dependencia
 
             dependencies {
                 //...otras dependencias de tu proyeco aquí.....
-                compile 'com.github.sbxcloud:androidlib:v2.0.3'
+                compile 'com.github.sbxcloud:androidlib:v2.1.0'
             }
             
 Esta librería se basa en annotaciones. Para crear tu propia Clase usuario puedes hacerla así:
@@ -366,6 +366,26 @@ Incluso puedes hacer fecth a los objetos
 
 ```
 
+Además puedes utilizar RXJava para cualquira de las anteriores fuciones
+
+```java
+
+        SbxQuery sbxquery= new SbxQuery(Product.class);
+        sbxquery.fetch(properties).find(Product.class).
+                subscribe(new Consumer<List<Product>>() {
+            @Override
+            public void accept(List<Product> products) throws Exception {
+                for (Product p : products) {
+                            Log.e("Productos", p.name);
+                }
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                throwable.printStackTrace();
+            }
+        });
+```
 
 
 

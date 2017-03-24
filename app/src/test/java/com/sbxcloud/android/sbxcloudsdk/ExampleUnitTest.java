@@ -23,6 +23,8 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import io.reactivex.functions.Consumer;
+
 import static org.junit.Assert.*;
 
 /**
@@ -46,6 +48,10 @@ public class ExampleUnitTest  {
 
     @Test
     public void inizialiceSbxAuth() throws Exception {
+        User user= new User("luis gabriel","lgguzman","lgguzman@sbxcloud.co","123456");
+//        user.logIn().subscribe(new Consumer<T>() {
+//        });
+
 
 //        JSONObject jsonObject = new JSONObject("{\"description\":\"leche5\",\"price\":1123,\"category\":\"28a1ca86-96f9-462c-b2df-c158a8e87c58\",\"expireAt\":\"2017-03-18T00:42:53.000Z\",\"_KEY\":\"1d3cd5e6-21a8-4de8-97c9-f4177aa6bad4\",\"_META\":{\"created_time\":\"2017-03-18T00:42:53.000Z\",\"updated_time\":\"2017-03-18T00:42:53.000Z\"}}");
 //        JSONObject fecth = new JSONObject("{\"Category\":{\"030347f4-e148-4c9d-956d-6cf9e2048b22\":{\"description\":\"lacteos3\",\"_KEY\":\"030347f4-e148-4c9d-956d-6cf9e2048b22\",\"_META\":{\"created_time\":\"2017-03-18T00:40:01.000Z\",\"updated_time\":\"2017-03-18T00:40:01.000Z\"}},\"1c2b41e7-8101-4d05-b7b5-0515235bf9f6\":{\"_META\":{\"created_time\":\"2017-03-18T00:41:30.000Z\",\"updated_time\":\"2017-03-18T00:41:30.000Z\"},\"_KEY\":\"1c2b41e7-8101-4d05-b7b5-0515235bf9f6\",\"description\":\"lacteos3\"},\"28a1ca86-96f9-462c-b2df-c158a8e87c58\":{\"_META\":{\"created_time\":\"2017-03-18T00:42:53.000Z\",\"updated_time\":\"2017-03-18T00:42:53.000Z\"},\"_KEY\":\"28a1ca86-96f9-462c-b2df-c158a8e87c58\",\"description\":\"lacteos8\"},\"6c2b7678-89eb-4fd3-9dfe-9ec9eb7829ba\":{\"_META\":{\"created_time\":\"2017-03-18T00:37:37.000Z\",\"updated_time\":\"2017-03-18T00:37:37.000Z\"},\"_KEY\":\"6c2b7678-89eb-4fd3-9dfe-9ec9eb7829ba\",\"description\":\"lacteos3\"}}}");

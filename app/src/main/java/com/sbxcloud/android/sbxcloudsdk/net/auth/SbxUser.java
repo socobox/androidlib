@@ -2,6 +2,7 @@ package com.sbxcloud.android.sbxcloudsdk.net.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
 import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxAuthToken;
@@ -18,12 +19,22 @@ import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.reactivestreams.Subscriber;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -68,6 +79,68 @@ public class SbxUser {
             }
         });
     }
+
+    public  <T extends SbxUser> Single<T> signUp(Class<T> type) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getDefaultSbxAuth().getUrlSigIn(this);
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<T> () {
+            @Override
+            public void subscribe(final SingleEmitter<T> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response= ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getBoolean("success")) {
+                                updateUser(jsonObject);
+                                e.onSuccess((T)SbxUser.this);
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+
+                    }
+                }).start();
+            }
+        });
+    }
+
+    public <T extends SbxUser> Single<T> logIn(Class<T> type) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getDefaultSbxAuth().getUrllogin(this);
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<T>() {
+            @Override
+            public void subscribe(final SingleEmitter<T> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response=ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            Log.e("user",jsonObject.toString());
+                            if (jsonObject.getBoolean("success")) {
+                                updateUser(jsonObject);
+                                e.onSuccess((T)SbxUser.this);
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+                    }
+                }).start();
+
+            }
+        });
+    }
+
 
     public void logInBackground(final SbxSimpleResponse simpleResponse) throws Exception{
         SbxUrlComposer sbxUrlComposer= SbxAuth.getDefaultSbxAuth().getUrllogin(this);
