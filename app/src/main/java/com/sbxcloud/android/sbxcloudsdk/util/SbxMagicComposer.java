@@ -2,6 +2,7 @@ package com.sbxcloud.android.sbxcloudsdk.util;
 
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
 import com.sbxcloud.android.sbxcloudsdk.exception.SbxModelException;
+import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxCreatedAt;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
 import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
@@ -121,6 +122,18 @@ public class SbxMagicComposer {
                 }
 
             }
+            final Annotation annotationDate = variable.getAnnotation(SbxCreatedAt.class);
+            if (annotationDate != null && annotationDate instanceof SbxCreatedAt) {
+                try {
+
+                    variable.set(o,
+                            SbxDataValidator.getDate(
+                                    jsonObject.optJSONObject("_META").optString("created_time")));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+
+            }
             variable.setAccessible(isAccessible);
 
         }
@@ -224,6 +237,18 @@ public class SbxMagicComposer {
                 try {
 
                     variable.set(o,jsonObject.optString("_KEY"));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+
+            }
+            final Annotation annotationDate = variable.getAnnotation(SbxCreatedAt.class);
+            if (annotationDate != null && annotationDate instanceof SbxCreatedAt) {
+                try {
+
+                    variable.set(o,
+                            SbxDataValidator.getDate(
+                                    jsonObject.optJSONObject("_META").optString("created_time")));
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -343,6 +368,18 @@ public class SbxMagicComposer {
                 try {
 
                     variable.set(o,jsonObject.optString("_KEY"));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+
+            }
+            final Annotation annotationDate = variable.getAnnotation(SbxCreatedAt.class);
+            if (annotationDate != null && annotationDate instanceof SbxCreatedAt) {
+                try {
+
+                    variable.set(o,
+                            SbxDataValidator.getDate(
+                                    jsonObject.optJSONObject("_META").optString("created_time")));
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     throw new SbxAuthException(e);
                 }
@@ -472,8 +509,21 @@ public class SbxMagicComposer {
                 }
 
             }
-            variable.setAccessible(isAccessible);
 
+            final Annotation annotationDate = variable.getAnnotation(SbxCreatedAt.class);
+            if (annotationDate != null && annotationDate instanceof SbxCreatedAt) {
+                try {
+
+                    variable.set(o,
+                            SbxDataValidator.getDate(
+                                    jsonObject.optJSONObject("_META").optString("created_time")));
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new SbxAuthException(e);
+                }
+
+            }
+
+            variable.setAccessible(isAccessible);
         }
 
 

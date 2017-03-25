@@ -16,9 +16,14 @@ import com.sbxcloud.android.sbxcloudsdk.exception.SbxConfigException;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 import com.sbxcloud.android.sbxcloudsdk.util.UrlHelper;
 
+import org.json.JSONObject;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Created by lgguzman on 18/02/17.
@@ -414,6 +419,51 @@ public class SbxAuth {
                 .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey);
            //     .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP);
     }
+
+    public static SbxUrlComposer getUrlRequestPasswordCode(String emailTemplate, String subject, String from) throws  Exception{
+        String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
+        String token = SbxAuth.getDefaultSbxAuth().getToken();
+        int domain = SbxAuth.getDefaultSbxAuth().getDomain();
+        SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
+                UrlHelper.PASSWORD_REQUEST
+                , UrlHelper.POST
+        );
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("domain", domain);
+        jsonObject.put("email_template", emailTemplate);
+        jsonObject.put("subject", subject);
+        jsonObject.put("user_email", from);
+        return sbxUrlComposer
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
+//                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+//                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+                .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
+                .addBody(jsonObject);
+    }
+
+
+    public static SbxUrlComposer getUrlChangePasswordCode(int userId, int code, String password) throws  Exception{
+        String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
+        String token = SbxAuth.getDefaultSbxAuth().getToken();
+        int domain = SbxAuth.getDefaultSbxAuth().getDomain();
+        SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
+                UrlHelper.PASSWORD_REQUEST
+                , UrlHelper.PUT
+        );
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("domain", domain);
+        jsonObject.put("user_id", userId);
+        jsonObject.put("code", code);
+        jsonObject.put("password", password);
+        return sbxUrlComposer
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
+//                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+//                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+                .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
+                .addBody(jsonObject);
+    }
+
+
 
 
 }

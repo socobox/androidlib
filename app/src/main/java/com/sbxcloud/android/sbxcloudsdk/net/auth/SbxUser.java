@@ -273,4 +273,114 @@ public class SbxUser {
     public JSONArray getMemberOf() {
         return memberOf;
     }
+
+    public  static Single<String> sendRequesCode(String emailTemplate, String subject, String from) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlRequestPasswordCode(emailTemplate,subject,from);
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<String>() {
+            @Override
+            public void subscribe(final SingleEmitter<String> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response=ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getBoolean("success")) {
+                                e.onSuccess("success");
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+                    }
+                }).start();
+
+            }
+        });
+    }
+
+
+    public static void sendRequesCodeInBackground(String emailTemplate, String subject, String from,final SbxSimpleResponse simpleResponse) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlRequestPasswordCode(emailTemplate,subject,from);
+        Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                simpleResponse.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if(jsonObject.getBoolean("success")) {
+                        simpleResponse.onSuccess("success");
+                    }else{
+                        simpleResponse.onError(new Exception(jsonObject.getString("error")));
+                    }
+                }catch (Exception  e ){
+                    simpleResponse.onError(e);
+                }
+            }
+        });
+    }
+
+    public  static Single<String> changePassword(int userId, int code, String password) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlChangePasswordCode(userId,code,password);
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<String>() {
+            @Override
+            public void subscribe(final SingleEmitter<String> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response=ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getBoolean("success")) {
+                                e.onSuccess("success");
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+                    }
+                }).start();
+
+            }
+        });
+    }
+
+
+    public static void sendRequesCodeInBackground(int userId, int code, String password, final SbxSimpleResponse simpleResponse) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlChangePasswordCode(userId,code,password);
+        Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                simpleResponse.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if(jsonObject.getBoolean("success")) {
+                        simpleResponse.onSuccess("success");
+                    }else{
+                        simpleResponse.onError(new Exception(jsonObject.getString("error")));
+                    }
+                }catch (Exception  e ){
+                    simpleResponse.onError(e);
+                }
+            }
+        });
+    }
 }
