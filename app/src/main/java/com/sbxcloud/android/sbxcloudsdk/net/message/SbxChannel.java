@@ -1,11 +1,7 @@
 package com.sbxcloud.android.sbxcloudsdk.net.message;
 
-import android.util.Log;
-
-import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
-import com.sbxcloud.android.sbxcloudsdk.message.ChannelHelper;
+import com.sbxcloud.android.sbxcloudsdk.message.SbxChannelHelper;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
-import com.sbxcloud.android.sbxcloudsdk.net.auth.SbxUser;
 import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxJsonModeler;
@@ -15,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +63,7 @@ public class SbxChannel {
     }
 
     public Single<SbxChannel> saveChannel() throws Exception{
-        SbxUrlComposer sbxUrlComposer= ChannelHelper.getUrlCreateChannel(getName());
+        SbxUrlComposer sbxUrlComposer= SbxChannelHelper.getUrlCreateChannel(getName());
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         return Single.create(new SingleOnSubscribe<SbxChannel>() {
             @Override
@@ -99,7 +94,7 @@ public class SbxChannel {
 
 
     public void saveChannelInBackground(final SbxSimpleResponse simpleResponse) throws Exception{
-        SbxUrlComposer sbxUrlComposer= ChannelHelper.getUrlCreateChannel(getName());
+        SbxUrlComposer sbxUrlComposer= SbxChannelHelper.getUrlCreateChannel(getName());
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
@@ -126,7 +121,7 @@ public class SbxChannel {
 
 
     public Single<SbxChannel> addMember(int [] users) throws Exception{
-        SbxUrlComposer sbxUrlComposer= ChannelHelper.getUrlAddMember(getId(),users);
+        SbxUrlComposer sbxUrlComposer= SbxChannelHelper.getUrlAddMember(getId(),users);
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         return Single.create(new SingleOnSubscribe<SbxChannel>() {
             @Override
@@ -156,7 +151,7 @@ public class SbxChannel {
 
 
     public void addMemberInBackground(int [] users, final SbxSimpleResponse simpleResponse) throws Exception{
-        SbxUrlComposer sbxUrlComposer=  ChannelHelper.getUrlAddMember(getId(),users);
+        SbxUrlComposer sbxUrlComposer=  SbxChannelHelper.getUrlAddMember(getId(),users);
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
@@ -183,7 +178,7 @@ public class SbxChannel {
 
 
     public Single<SbxMessage> sendMessage(final SbxMessage sbxMessage) throws Exception{
-        SbxUrlComposer sbxUrlComposer= ChannelHelper.getUrlSendMessage(getId(),sbxMessage.getSbxJsonModeler());
+        SbxUrlComposer sbxUrlComposer= SbxChannelHelper.getUrlSendMessage(getId(),sbxMessage.getSbxJsonModeler());
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         return Single.create(new SingleOnSubscribe<SbxMessage>() {
             @Override
@@ -213,7 +208,7 @@ public class SbxChannel {
 
 
     public void sendMessageInBackground(final SbxMessage sbxMessage, final SbxSimpleResponse simpleResponse) throws Exception{
-        SbxUrlComposer sbxUrlComposer=  ChannelHelper.getUrlSendMessage(getId(),sbxMessage.getSbxJsonModeler());
+        SbxUrlComposer sbxUrlComposer=  SbxChannelHelper.getUrlSendMessage(getId(),sbxMessage.getSbxJsonModeler());
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
@@ -238,7 +233,7 @@ public class SbxChannel {
     }
 
     public  Single <List<SbxMessage>> getMessage(final Class<? extends SbxJsonModeler> clazz) throws Exception{
-        SbxUrlComposer sbxUrlComposer= ChannelHelper.getUrlListMessage(getId());
+        SbxUrlComposer sbxUrlComposer= SbxChannelHelper.getUrlListMessage(getId());
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         return Single.create(new SingleOnSubscribe<List<SbxMessage>>() {
             @Override

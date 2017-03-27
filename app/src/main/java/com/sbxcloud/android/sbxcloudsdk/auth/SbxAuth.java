@@ -464,6 +464,19 @@ public class SbxAuth {
     }
 
 
+    public static SbxUrlComposer getUrlDomainList() throws  Exception{
+        String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();
+        String token = SbxAuth.getDefaultSbxAuth().getToken();
+        SbxUrlComposer sbxUrlComposer = new SbxUrlComposer(
+                UrlHelper.DOMAIN
+                , UrlHelper.GET
+        );
+        return sbxUrlComposer
+                .addHeader(UrlHelper.HEADER_KEY_APP_KEY, appKey)
+//                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
+//                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
+                .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token);
+    }
 
 
 }

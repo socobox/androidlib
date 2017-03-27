@@ -64,7 +64,8 @@ public class SbxQueryBuilder {
             LIKE("LIKE"),
             LT("<"),
             GT(">"),
-            NOT("<>");
+            NOT("<>"),
+            ISNOT("IS NOT");
 
             private String val;
 
@@ -119,6 +120,19 @@ public class SbxQueryBuilder {
 
         }
 
+        public SbxQueryBuilder addGeoSort(double lat, double lon, String latName, String lonName){
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("lat",lat);
+                jsonObject.put("lon",lon);
+                jsonObject.put("latProperty",latName);
+                jsonObject.put("lonProperty",lonName);
+                obj.put("geosort",jsonObject);
+            }catch (Exception ex){}
+            return this;
+        }
+
         public SbxQueryBuilder insert(JSONObject jsonObject)throws  Exception{
             if(row!=null){
                 row.put(jsonObject);
@@ -144,7 +158,8 @@ public class SbxQueryBuilder {
             return this;
         }
 
-        public SbxQueryBuilder insertFieldAtRow(String field, Object data, int position)throws  Exception{
+
+    public SbxQueryBuilder insertFieldAtRow(String field, Object data, int position)throws  Exception{
             if(row!=null){
                 if(position < row.length())
                     row.getJSONObject(position).put(field, SbxDataValidator.validate( data));
@@ -225,6 +240,10 @@ public class SbxQueryBuilder {
 
         public SbxQueryBuilder whereIsEqual(String field, Object value) throws JSONException{
             return   addField(OP.EQ,lastANDOR,field,value);
+        }
+
+        public SbxQueryBuilder whereIsNotNull(String field) throws JSONException{
+            return   addField(OP.ISNOT,lastANDOR,field,null);
         }
 
         public SbxQueryBuilder whereGreaterThan(String field, Object value) throws JSONException{

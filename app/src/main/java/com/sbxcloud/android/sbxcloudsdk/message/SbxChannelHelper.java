@@ -13,7 +13,7 @@ import org.json.JSONObject;
  * Created by lgguzman on 24/03/17.
  */
 
-public class ChannelHelper {
+public class SbxChannelHelper {
 
     public static SbxUrlComposer getUrlCreateChannel(String channelName) throws  Exception{
         String appKey = SbxAuth.getDefaultSbxAuth().getAppKey();

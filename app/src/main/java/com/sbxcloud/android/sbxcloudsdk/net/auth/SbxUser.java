@@ -14,6 +14,7 @@ import com.sbxcloud.android.sbxcloudsdk.exception.SbxConfigException;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
 import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
 import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
+import com.sbxcloud.android.sbxcloudsdk.util.SbxJsonModeler;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONArray;
@@ -172,12 +173,12 @@ public class SbxUser {
         sbxUser=null;
         SbxAuth.getDefaultSbxAuth().resetToken();
         SharedPreferences sharedPreferences = SbxAuth.getDefaultSbxAuth().getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(FILE_NAME_USER, "").apply();
+        sharedPreferences.edit().putString(FILE_NAME_USER, "").commit();
     }
 
     public void updateUser(JSONObject jsonObject) throws Exception{
         SharedPreferences sharedPreferences = SbxAuth.getDefaultSbxAuth().getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(FILE_NAME_USER, jsonObject.toString()).apply();
+        sharedPreferences.edit().putString(FILE_NAME_USER, jsonObject.toString()).commit();
         String token=jsonObject.getString("token");
         JSONObject userJson=jsonObject.getJSONObject("user");
         String email=userJson.getString("email");
@@ -264,6 +265,10 @@ public class SbxUser {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id){
+        this.id=id;
     }
 
     public String getHomeFolder() {
@@ -359,7 +364,7 @@ public class SbxUser {
     }
 
 
-    public static void sendRequesCodeInBackground(int userId, int code, String password, final SbxSimpleResponse simpleResponse) throws Exception{
+    public static void changePasswordInBackground(int userId, int code, String password, final SbxSimpleResponse simpleResponse) throws Exception{
         SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlChangePasswordCode(userId,code,password);
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
@@ -383,4 +388,80 @@ public class SbxUser {
             }
         });
     }
+
+    public  static <T extends SbxJsonModeler>Single<T> getAppConfig(final Class<T> tClass) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlDomainList();
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<T>() {
+            @Override
+            public void subscribe(final SingleEmitter<T> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response=ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getBoolean("success")) {
+                                SbxJsonModeler sbxJsonModeler = tClass.newInstance();
+                                JSONArray jsonArray = jsonObject.getJSONArray("domains");
+                                for(int i=0;i<=jsonArray.length();i++){
+                                    if(SbxAuth.getDefaultSbxAuth().getDomain()==jsonArray.getJSONObject(i).getInt("id")){
+                                        sbxJsonModeler.wrapFromJson(jsonArray.getJSONObject(i).getJSONObject("config"));
+                                        break;
+                                    }
+                                }
+
+                                e.onSuccess((T)sbxJsonModeler);
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+                    }
+                }).start();
+
+            }
+        });
+    }
+
+
+    public static <T extends SbxJsonModeler> void getAppConfigInBackground(final Class<T> tClass, final SbxSimpleResponse simpleResponse) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getUrlDomainList();
+        Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                simpleResponse.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if(jsonObject.getBoolean("success")) {
+                        SbxJsonModeler sbxJsonModeler = tClass.newInstance();
+                        JSONArray jsonArray = jsonObject.getJSONArray("domains");
+                        for(int i=0;i<=jsonArray.length();i++){
+                            if(SbxAuth.getDefaultSbxAuth().getDomain()==jsonArray.getJSONObject(i).getInt("id")){
+                                sbxJsonModeler.wrapFromJson(jsonArray.getJSONObject(i).getJSONObject("config"));
+                                break;
+                            }
+                        }
+                        simpleResponse.onSuccess(sbxJsonModeler);
+                    }else{
+                        simpleResponse.onError(new Exception(jsonObject.getString("error")));
+                    }
+                }catch (Exception  e ){
+                    simpleResponse.onError(e);
+                }
+            }
+        });
+    }
+
+
+
+
 }

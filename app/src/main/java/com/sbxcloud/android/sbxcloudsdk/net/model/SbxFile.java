@@ -1,13 +1,15 @@
-package com.sbxcloud.android.sbxcloudsdk.net.message;
+package com.sbxcloud.android.sbxcloudsdk.net.model;
 
+import com.sbxcloud.android.sbxcloudsdk.message.SbxChannelHelper;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
 import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
-import com.sbxcloud.android.sbxcloudsdk.push.SbxPushHelper;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxJsonModeler;
+import com.sbxcloud.android.sbxcloudsdk.net.message.SbxChannel;
+import com.sbxcloud.android.sbxcloudsdk.util.SbxFileHelper;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import io.reactivex.Single;
@@ -19,13 +21,58 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by lgguzman on 24/03/17.
+ * Created by lgguzman on 25/03/17.
  */
 
-public class SbxPush {
+public class SbxFile {
 
-    public static Single<String> sendPush(String title, String alias, String message, SbxJsonModeler sbxJsonModeler) throws Exception{
-        SbxUrlComposer sbxUrlComposer= SbxPushHelper.getUrlSendPush(title,alias,message,sbxJsonModeler);
+    private String token;
+    private String name;
+    private String folderKey;
+    private File file;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFolderKey() {
+        return folderKey;
+    }
+
+    public void setFolderKey(String folderKey) {
+        this.folderKey = folderKey;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+
+    public SbxFile(String name, String folderKey, File file) {
+        this.name = name;
+        this.folderKey = folderKey;
+        this.file = file;
+    }
+
+
+    public Single<String> save() throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxFileHelper.getUrlUploadFile(getFile(),getName(),getFolderKey());
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         return Single.create(new SingleOnSubscribe<String>() {
             @Override
@@ -37,7 +84,8 @@ public class SbxPush {
                             Response response=ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             if (jsonObject.getBoolean("success")) {
-                                e.onSuccess("success");
+                                setToken(jsonObject.getString("token"));
+                                e.onSuccess(getToken());
                                 //sucess
                             } else {
                                 //error
@@ -54,8 +102,8 @@ public class SbxPush {
     }
 
 
-    public static void sendPush(String title, String alias, String message, SbxJsonModeler sbxJsonModeler, final SbxSimpleResponse simpleResponse) throws Exception{
-        SbxUrlComposer sbxUrlComposer=   SbxPushHelper.getUrlSendPush(title,alias,message,sbxJsonModeler);
+    public void savelInBackground(final SbxSimpleResponse simpleResponse) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxFileHelper.getUrlUploadFile(getFile(),getName(),getFolderKey());
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
@@ -68,6 +116,7 @@ public class SbxPush {
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     if(jsonObject.getBoolean("success")) {
+                        setToken(jsonObject.getString("token"));
                         simpleResponse.onSuccess("success");
                     }else{
                         simpleResponse.onError(new Exception(jsonObject.getString("error")));
@@ -78,4 +127,5 @@ public class SbxPush {
             }
         });
     }
+
 }
