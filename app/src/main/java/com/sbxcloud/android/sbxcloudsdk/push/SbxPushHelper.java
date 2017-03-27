@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * Created by lgguzman on 24/03/17.
  */
 
-public class PushHelper {
+public class SbxPushHelper {
 
     public static SbxUrlComposer getUrlSendPush(String title, String alias, String message, SbxJsonModeler sbxJsonModeler) throws  Exception{
 

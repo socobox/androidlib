@@ -4,10 +4,13 @@ import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 import com.sbxcloud.android.sbxcloudsdk.util.UrlHelper;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -60,22 +63,56 @@ public class ApiManager {
     }
 
     public Request sbxUrlComposer2Request(SbxUrlComposer sbxUrlComposer){
+
         Request.Builder builder = new Request.Builder()
                 .url(sbxUrlComposer.getUrl());
+
         HashMap<String , String > headers=sbxUrlComposer.getHeader();
         for (String key:headers.keySet()){
             builder.addHeader(key,headers.get(key));
         }
-        final MediaType JSON
-                = MediaType.parse("application/json; charset=utf-8");
+
+
         switch (sbxUrlComposer.getType()){
-            case UrlHelper.POST:{
-                RequestBody requestBody= RequestBody.create(JSON,sbxUrlComposer.getBody().toString());
-                builder.post(requestBody);
-                break;
-            }
+
             case UrlHelper.GET:{
                 break;
+            }
+            case UrlHelper.POST:{
+                MediaType MEDIA=null;
+                if(sbxUrlComposer.getFile()!=null) {
+                    MEDIA = MediaType.parse("multipart/form-data");
+                    RequestBody requestFile =
+                            RequestBody.create(MEDIA, sbxUrlComposer.getFile());
+
+                    // MultipartBody.Part is used to send also the actual file name
+                    MultipartBody.Part body =
+                            MultipartBody.Part.createFormData("file", sbxUrlComposer.getFileName(), requestFile);
+                    // MultipartBody.Part is used to send also the actual file name
+                    MultipartBody.Part body2 =
+                            MultipartBody.Part.createFormData("model", sbxUrlComposer.getFileModel());
+
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addPart(body)
+                            .addPart(body2)
+                            .build();
+                    builder.post(requestBody);
+
+                }else{
+                    MEDIA = MediaType.parse("application/json; charset=utf-8");
+                    RequestBody requestBody= RequestBody.create(MEDIA,sbxUrlComposer.getBody().toString());
+                    builder.post(requestBody);
+                }
+                break;
+            }
+            case UrlHelper.PUT:{
+                MediaType MEDIA=null;
+                    MEDIA = MediaType.parse("application/json; charset=utf-8");
+                    RequestBody requestBody= RequestBody.create(MEDIA,sbxUrlComposer.getBody().toString());
+                    builder.put(requestBody);
+                break;
+
             }
         }
         return builder.build();

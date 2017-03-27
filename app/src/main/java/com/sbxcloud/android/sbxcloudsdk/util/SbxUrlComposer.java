@@ -2,6 +2,7 @@ package com.sbxcloud.android.sbxcloudsdk.util;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -18,6 +19,9 @@ public class SbxUrlComposer {
     private String type;
     private HashMap<String,String> header;
     private JSONObject body;
+    private File file;
+    private String fileName;
+    private String fileModel;
 
     /**
      *
@@ -51,6 +55,18 @@ public class SbxUrlComposer {
         return type;
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getFileModel() {
+        return fileModel;
+    }
+
     /**
      *
      * @param url
@@ -64,6 +80,8 @@ public class SbxUrlComposer {
         body= new JSONObject();
     }
 
+
+
     /**
      *
      * @param key
@@ -76,6 +94,15 @@ public class SbxUrlComposer {
         else
             this.url=this.url+"&"+key+"="+URLEncoder.encode(value);
 
+        return this;
+    }
+
+
+    public SbxUrlComposer addMultipartData(File file, String name, String key){
+
+        this.file=file;
+        this.fileName=name;
+        this.fileModel="{\"key\":\""+key+"\"}";
         return this;
     }
 
@@ -122,6 +149,7 @@ public class SbxUrlComposer {
 
     @Override
     public String toString(){
-        return "\n"+getType()+"\n"+getUrl()+"\nHEADER\n"+getHeaderString()+"\nBODY\n"+((getBody().toString()==null)?"":getBody().toString())+"\n";
+        return "\n"+getType()+"\n"+getUrl()+"\nHEADER\n"+getHeaderString()+"\nBODY\n"+((getBody().toString()==null)?"":getBody().toString())+"\n"
+                +file==null?"":"\nMULTIPART\n"+"file:\n"+fileName+"\n"+"model:\n"+fileModel;
     }
 }

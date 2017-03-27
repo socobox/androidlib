@@ -80,7 +80,7 @@ public class SbxQuery{
     }
 
     public SbxQuery whereIsNotEqual(String field, Object value) throws JSONException{
-        sbxQueryBuilder.whereLessThan(field,value);
+        sbxQueryBuilder.whereIsNotEqual(field,value);
         return   this;
     }
 
@@ -89,8 +89,17 @@ public class SbxQuery{
         return   this;
     }
 
+    public SbxQueryBuilder whereIsNotNull(String field) throws JSONException{
+        return   sbxQueryBuilder.whereIsNotNull(field);
+    }
+
     public SbxQuery fetch(String propieties[]) throws JSONException{
         sbxQueryBuilder.fetch(propieties);
+        return   this;
+    }
+
+    public SbxQuery addGeoSort(double lat, double lon, String latName, String lonName) throws JSONException{
+        sbxQueryBuilder.addGeoSort(lat, lon, latName, lonName);
         return   this;
     }
 
