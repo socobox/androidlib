@@ -256,7 +256,7 @@ public class SbxChannel {
                                     sbxMessage.setSederEmail(message.getString("user_email"));
                                     sbxMessage.setSenderLogin(message.getString("user_login"));
                                     SbxJsonModeler sbxJsonModeler = clazz.newInstance();
-                                    sbxJsonModeler.wrapFromJson(message.getJSONObject("body"));
+                                    sbxJsonModeler.wrapFromJson(new JSONObject(message.getString("body")));
                                     sbxMessage.setSbxJsonModeler(sbxJsonModeler);
                                     messages.add(sbxMessage);
 
