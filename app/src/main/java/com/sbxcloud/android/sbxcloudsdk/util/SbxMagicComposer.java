@@ -46,6 +46,10 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Integer":{
+                            variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "int":{
                             variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
@@ -54,7 +58,19 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Long":{
+                            variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Float":{
                             variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
@@ -63,10 +79,12 @@ public class SbxMagicComposer {
                             break;
                         }
                         case "class java.util.Date":{
-                            variable.set(o,
-                                    SbxDataValidator.getDate(
-                                    jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation))));
-                            break;
+                            try {
+                                variable.set(o,
+                                        SbxDataValidator.getDate(
+                                                jsonObject.optString(SbxDataValidator.getAnnotationName(variable, annotation))));
+                            }catch (Exception e){}
+                                break;
                         }
                         case "boolean":{
                             variable.set(o,jsonObject.optBoolean(SbxDataValidator.getAnnotationName(variable,annotation)));
@@ -75,32 +93,34 @@ public class SbxMagicComposer {
                         default:{
 
                             Object obj= jsonObject.get(SbxDataValidator.getAnnotationName(variable,annotation));
-                            if(obj instanceof String){
-                               Object reference=variable.getType().getConstructor().newInstance();
-                                final Field[] variables2 = variable.getType().getDeclaredFields();
-                                for (final Field variable2 : variables2) {
+                            if(obj!=null) {
+                                if (obj instanceof String) {
+                                    Object reference = variable.getType().getConstructor().newInstance();
+                                    final Field[] variables2 = variable.getType().getDeclaredFields();
+                                    for (final Field variable2 : variables2) {
 
-                                    final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
+                                        final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
 
-                                    if (annotation2 != null && annotation2 instanceof SbxKey) {
-                                        try {
-                                            boolean isAccessible2 = variable2.isAccessible();
-                                            variable2.setAccessible(true);
-                                            variable2.set(reference, obj);
-                                            variable2.setAccessible(isAccessible2);
-                                            break;
-                                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                                            throw new SbxAuthException(e);
+                                        if (annotation2 != null && annotation2 instanceof SbxKey) {
+                                            try {
+                                                boolean isAccessible2 = variable2.isAccessible();
+                                                variable2.setAccessible(true);
+                                                variable2.set(reference, obj);
+                                                variable2.setAccessible(isAccessible2);
+                                                break;
+                                            } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                throw new SbxAuthException(e);
+                                            }
                                         }
                                     }
+                                    variable.set(o, reference);
+                                } else {
+                                    variable.set(o,
+                                            getSbxModel(
+                                                    jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
+                                                    , variable.getType(), level)
+                                    );
                                 }
-                                variable.set(o,reference);
-                            }else {
-                                variable.set(o,
-                                        getSbxModel(
-                                                jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
-                                                , variable.getType(), level)
-                                );
                             }
                             break;
                         }
@@ -166,6 +186,10 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Integer":{
+                            variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "int":{
                             variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
@@ -174,7 +198,19 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Long":{
+                            variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Float":{
                             variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
@@ -183,10 +219,12 @@ public class SbxMagicComposer {
                             break;
                         }
                         case "class java.util.Date":{
-                            variable.set(o,
-                                    SbxDataValidator.getDate(
-                                            jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation))));
-                            break;
+                            try {
+                                variable.set(o,
+                                        SbxDataValidator.getDate(
+                                                jsonObject.optString(SbxDataValidator.getAnnotationName(variable, annotation))));
+                            }catch (Exception e){}
+                                break;
                         }
                         case "boolean":{
                             variable.set(o,jsonObject.optBoolean(SbxDataValidator.getAnnotationName(variable,annotation)));
@@ -195,32 +233,34 @@ public class SbxMagicComposer {
                         default:{
 
                             Object obj= jsonObject.get(SbxDataValidator.getAnnotationName(variable,annotation));
-                            if(obj instanceof String){
-                                Object reference=variable.getType().getConstructor().newInstance();
-                                final Field[] variables2 = variable.getType().getDeclaredFields();
-                                for (final Field variable2 : variables2) {
+                            if(obj!=null) {
+                                if (obj instanceof String) {
+                                    Object reference = variable.getType().getConstructor().newInstance();
+                                    final Field[] variables2 = variable.getType().getDeclaredFields();
+                                    for (final Field variable2 : variables2) {
 
-                                    final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
+                                        final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
 
-                                    if (annotation2 != null && annotation2 instanceof SbxKey) {
-                                        try {
-                                            boolean isAccessible2 = variable2.isAccessible();
-                                            variable2.setAccessible(true);
-                                            variable2.set(reference, obj);
-                                            variable2.setAccessible(isAccessible2);
-                                            break;
-                                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                                            throw new SbxAuthException(e);
+                                        if (annotation2 != null && annotation2 instanceof SbxKey) {
+                                            try {
+                                                boolean isAccessible2 = variable2.isAccessible();
+                                                variable2.setAccessible(true);
+                                                variable2.set(reference, obj);
+                                                variable2.setAccessible(isAccessible2);
+                                                break;
+                                            } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                throw new SbxAuthException(e);
+                                            }
                                         }
                                     }
+                                    variable.set(o, reference);
+                                } else {
+                                    variable.set(o,
+                                            getSbxModel(
+                                                    jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
+                                                    , variable.getType(), level)
+                                    );
                                 }
-                                variable.set(o,reference);
-                            }else {
-                                variable.set(o,
-                                        getSbxModel(
-                                                jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
-                                                , variable.getType(), level)
-                                );
                             }
                             break;
                         }
@@ -286,6 +326,10 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Integer":{
+                            variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "int":{
                             variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
@@ -294,7 +338,19 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Long":{
+                            variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Float":{
                             variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
@@ -303,10 +359,12 @@ public class SbxMagicComposer {
                             break;
                         }
                         case "class java.util.Date":{
-                            variable.set(o,
-                                    SbxDataValidator.getDate(
-                                            jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation))));
-                            break;
+                            try {
+                                variable.set(o,
+                                        SbxDataValidator.getDate(
+                                                jsonObject.optString(SbxDataValidator.getAnnotationName(variable, annotation))));
+                            }catch (Exception e){}
+                                break;
                         }
                         case "boolean":{
                             variable.set(o,jsonObject.optBoolean(SbxDataValidator.getAnnotationName(variable,annotation)));
@@ -315,45 +373,48 @@ public class SbxMagicComposer {
                         default:{
 
                             Object obj= jsonObject.get(SbxDataValidator.getAnnotationName(variable,annotation));
-                            if(obj instanceof String){
+                            if(obj!=null) {
+                                if (obj instanceof String) {
 
-                                Object reference=null;
-                                try{
-                                    reference = SbxMagicComposer.getSbxModel(fetches.getJSONObject(SbxDataValidator
-                                                    .getAnnotationModelNameFromVariable(variable)).getJSONObject((String)obj),
-                                            variable.getType(),level) ;
-                                }catch (Exception ex){}
-
-                                if(reference==null) {
-                                    reference=variable.getType().getConstructor().newInstance();
-                                    final Field[] variables2 = variable.getType().getDeclaredFields();
-                                    for (final Field variable2 : variables2) {
-
-                                        final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
-
-                                        if (annotation2 != null && annotation2 instanceof SbxKey) {
-                                            try {
-                                                boolean isAccessible2 = variable2.isAccessible();
-                                                variable2.setAccessible(true);
-                                                variable2.set(reference, obj);
-                                                variable2.setAccessible(isAccessible2);
-                                                break;
-                                            } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                throw new SbxAuthException(e);
-                                            }
-                                        }
+                                    Object reference = null;
+                                    try {
+                                        reference = SbxMagicComposer.getSbxModel(fetches.getJSONObject(SbxDataValidator
+                                                        .getAnnotationModelNameFromVariable(variable)).getJSONObject((String) obj),
+                                                variable.getType(), level);
+                                    } catch (Exception ex) {
                                     }
 
+                                    if (reference == null) {
+                                        reference = variable.getType().getConstructor().newInstance();
+                                        final Field[] variables2 = variable.getType().getDeclaredFields();
+                                        for (final Field variable2 : variables2) {
+
+                                            final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
+
+                                            if (annotation2 != null && annotation2 instanceof SbxKey) {
+                                                try {
+                                                    boolean isAccessible2 = variable2.isAccessible();
+                                                    variable2.setAccessible(true);
+                                                    variable2.set(reference, obj);
+                                                    variable2.setAccessible(isAccessible2);
+                                                    break;
+                                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                    throw new SbxAuthException(e);
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    variable.set(o, reference);
+                                } else {
+                                    variable.set(o,
+                                            getSbxModel(
+                                                    jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
+                                                    , variable.getType(), level)
+                                    );
                                 }
-                                variable.set(o,reference);
-                            }else {
-                                variable.set(o,
-                                        getSbxModel(
-                                                jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
-                                                , variable.getType(), level)
-                                );
+                                break;
                             }
-                            break;
                         }
 
 
@@ -419,6 +480,10 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Integer":{
+                            variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "int":{
                             variable.set(o,jsonObject.optInt(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
@@ -427,7 +492,19 @@ public class SbxMagicComposer {
                             variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
+                        case "class java.lang.Long":{
+                            variable.set(o,jsonObject.optLong(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
                         case "double":{
+                            variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
+                            break;
+                        }
+                        case "class java.lang.Float":{
                             variable.set(o,jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable,annotation)));
                             break;
                         }
@@ -436,10 +513,12 @@ public class SbxMagicComposer {
                             break;
                         }
                         case "class java.util.Date":{
-                            variable.set(o,
-                                    SbxDataValidator.getDate(
-                                            jsonObject.optString(SbxDataValidator.getAnnotationName(variable,annotation))));
-                            break;
+                            try {
+                                variable.set(o,
+                                        SbxDataValidator.getDate(
+                                                jsonObject.optString(SbxDataValidator.getAnnotationName(variable, annotation))));
+                            }catch (Exception e){}
+                                break;
                         }
                         case "boolean":{
                             variable.set(o,jsonObject.optBoolean(SbxDataValidator.getAnnotationName(variable,annotation)));
@@ -448,48 +527,51 @@ public class SbxMagicComposer {
                         default:{
 
                             Object obj= jsonObject.get(SbxDataValidator.getAnnotationName(variable,annotation));
-                            if(obj instanceof String){
+                            if(obj!=null) {
+                                if (obj instanceof String) {
 
-                                Object reference=null;
-                                try{
-                                    reference = SbxMagicComposer.getSbxModel(fetches.getJSONObject(SbxDataValidator
-                                            .getAnnotationModelNameFromVariable(variable)).getJSONObject((String)obj),
-                                            variable.getType(),level) ;
-                                }catch (Exception ex){}
+                                    Object reference = null;
+                                    try {
+                                        reference = SbxMagicComposer.getSbxModel(fetches.getJSONObject(SbxDataValidator
+                                                        .getAnnotationModelNameFromVariable(variable)).getJSONObject((String) obj),
+                                                variable.getType(), level);
+                                    } catch (Exception ex) {
+                                    }
 
-                                if(reference==null) {
-                                    variable.getType().getConstructor().newInstance();
-                                    final Field[] variables2 = variable.getType().getDeclaredFields();
-                                    for (final Field variable2 : variables2) {
+                                    if (reference == null) {
+                                        reference = variable.getType().getConstructor().newInstance();
+                                        final Field[] variables2 = variable.getType().getDeclaredFields();
+                                        for (final Field variable2 : variables2) {
 
-                                        final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
+                                            final Annotation annotation2 = variable2.getAnnotation(SbxKey.class);
 
-                                        if (annotation2 != null && annotation2 instanceof SbxKey) {
-                                            try {
-                                                boolean isAccessible2 = variable2.isAccessible();
-                                                variable2.setAccessible(true);
-                                                variable2.set(reference, obj);
-                                                variable2.setAccessible(isAccessible2);
-                                                break;
-                                            } catch (IllegalArgumentException | IllegalAccessException e) {
-                                                throw new SbxAuthException(e);
+                                            if (annotation2 != null && annotation2 instanceof SbxKey) {
+                                                try {
+                                                    boolean isAccessible2 = variable2.isAccessible();
+                                                    variable2.setAccessible(true);
+                                                    variable2.set(reference, obj);
+                                                    variable2.setAccessible(isAccessible2);
+                                                    break;
+                                                } catch (IllegalArgumentException | IllegalAccessException e) {
+                                                    throw new SbxAuthException(e);
+                                                }
                                             }
                                         }
                                     }
+
+
+                                    variable.set(o, reference);
+
+
+                                } else {
+                                    variable.set(o,
+                                            getSbxModel(
+                                                    jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
+                                                    , variable.getType(), level)
+                                    );
                                 }
-
-
-                                variable.set(o,reference);
-
-
-                            }else {
-                                variable.set(o,
-                                        getSbxModel(
-                                                jsonObject.optJSONObject(SbxDataValidator.getAnnotationName(variable, annotation))
-                                                , variable.getType(), level)
-                                );
+                                break;
                             }
-                            break;
                         }
 
 
