@@ -388,7 +388,7 @@ public class SbxMagicComposer {
                                         try {
                                             reference = SbxMagicComposer.getSbxModel(fetches.getJSONObject(SbxDataValidator
                                                             .getAnnotationModelNameFromVariable(variable)).getJSONObject((String) obj),
-                                                    variable.getType(), level);
+                                                    variable.getType(), level,fetches);
                                         } catch (Exception ex) {
                                         }
 
@@ -545,7 +545,7 @@ public class SbxMagicComposer {
                                         try {
                                             reference = SbxMagicComposer.getSbxModel(fetches.getJSONObject(SbxDataValidator
                                                             .getAnnotationModelNameFromVariable(variable)).getJSONObject((String) obj),
-                                                    variable.getType(), level);
+                                                    variable.getType(), level,fetches);
                                         } catch (Exception ex) {
                                         }
 
