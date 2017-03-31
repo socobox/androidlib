@@ -72,11 +72,11 @@ public class SbxMagicComposer {
                                 break;
                             }
                             case "class java.lang.Float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.getDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "class java.util.Date": {
@@ -215,11 +215,11 @@ public class SbxMagicComposer {
                                 break;
                             }
                             case "class java.lang.Float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "class java.util.Date": {
@@ -358,11 +358,11 @@ public class SbxMagicComposer {
                                 break;
                             }
                             case "class java.lang.Float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "class java.util.Date": {
@@ -515,11 +515,11 @@ public class SbxMagicComposer {
                                 break;
                             }
                             case "class java.lang.Float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "float": {
-                                variable.set(o, jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
+                                variable.set(o, (float)jsonObject.optDouble(SbxDataValidator.getAnnotationName(variable, annotation)));
                                 break;
                             }
                             case "class java.util.Date": {
