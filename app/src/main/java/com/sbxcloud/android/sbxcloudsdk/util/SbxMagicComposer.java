@@ -23,7 +23,7 @@ public class SbxMagicComposer {
     public static Object getSbxModel(JSONObject jsonObject,  Class<?> clazz, int level)throws  Exception{
         level++;
         //accept only two level
-        if (level==3)
+        if (level==4)
             return null;
         if(!SbxDataValidator.hasKeyAnnotation(clazz)){
             throw new SbxModelException("SbxKey is required");
@@ -168,7 +168,7 @@ public class SbxMagicComposer {
     public static void getSbxModel(JSONObject jsonObject,  Class<?> clazz, Object o, int level)throws  Exception{
         level++;
         //accept only two level
-        if (level==3)
+        if (level==4)
             return ;
         if(!SbxDataValidator.hasKeyAnnotation(clazz)){
             throw new SbxModelException("SbxKey is required");
@@ -311,7 +311,7 @@ public class SbxMagicComposer {
     public static void getSbxModel(JSONObject jsonObject,  Class<?> clazz, Object o, int level, JSONObject fetches)throws  Exception{
         level++;
         //accept only two level
-        if (level==3)
+        if (level==4)
             return ;
         if(!SbxDataValidator.hasKeyAnnotation(clazz)){
             throw new SbxModelException("SbxKey is required");
@@ -466,7 +466,7 @@ public class SbxMagicComposer {
     public static Object getSbxModel(JSONObject jsonObject,  Class<?> clazz, int level, JSONObject fetches)throws  Exception{
         level++;
         //accept only two level
-        if (level==3)
+        if (level==4)
             return null;
         if(!SbxDataValidator.hasKeyAnnotation(clazz)){
             throw new SbxModelException("SbxKey is required");
