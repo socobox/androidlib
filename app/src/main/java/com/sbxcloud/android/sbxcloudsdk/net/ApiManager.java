@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -54,6 +56,7 @@ public class ApiManager {
         if(SbxAuth.getDefaultSbxAuth().isHttpLog()) {
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         }
+
 
         mOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)

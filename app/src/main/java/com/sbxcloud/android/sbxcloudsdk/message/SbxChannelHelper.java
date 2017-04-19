@@ -86,6 +86,7 @@ public class SbxChannelHelper {
 //                .addHeader(UrlHelper.HEADER_KEY_ENCODING, UrlHelper.HEADER_GZIP)
 //                .addHeader(UrlHelper.HEADER_KEY_CONTENT_TYPE, UrlHelper.HEADER_JSON)
                 .addHeader(UrlHelper.HEADER_KEY_AUTORIZATION, UrlHelper.HEADER_BEARER+token)
-                .setUrlParam("channel_id",channelId+"");
+                .addBody(jsonObject);
+              //  .setUrlParam("channel_id",channelId+"");
     }
 }

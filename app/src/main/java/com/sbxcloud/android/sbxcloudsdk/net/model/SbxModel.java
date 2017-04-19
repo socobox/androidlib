@@ -65,7 +65,6 @@ public class SbxModel {
     public <T extends SbxModel> Single<T> save(Class<T> type)throws  Exception{
         SbxUrlComposer sbxUrlComposer = SbxModelHelper.getUrlInsertOrUpdateRow(SbxModel.this);
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
-        ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
         return Single.create(new SingleOnSubscribe<T>() {
             @Override
             public void subscribe(final SingleEmitter<T> e) throws Exception {
@@ -98,7 +97,6 @@ public class SbxModel {
     public static <T> Single <List<T>> saveMany(final List <T> list)throws  Exception{
         SbxUrlComposer sbxUrlComposer = SbxModelHelper.getUrlInsertOrUpdateRows(list);
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
-        ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
         return Single.create(new SingleOnSubscribe<List<T>>() {
             @Override
             public void subscribe(final SingleEmitter<List<T>> e) throws Exception {

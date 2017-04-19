@@ -2,9 +2,12 @@ package com.sbxcloud.android.sbxcloudsdk.net.message;
 
 import com.sbxcloud.android.sbxcloudsdk.message.SbxChannelHelper;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
+import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxArrayResponse;
 import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
+import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxJsonModeler;
+import com.sbxcloud.android.sbxcloudsdk.util.SbxMagicComposer;
 import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONArray;
@@ -276,5 +279,53 @@ public class SbxChannel {
             }
         });
     }
+
+    public  void getMessageInBackground(final Class<? extends SbxJsonModeler> clazz ,final SbxArrayResponse <SbxMessage> sbxArrayResponse) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxChannelHelper.getUrlListMessage(getId());
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                sbxArrayResponse.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try{
+                    String s=response.body().string();
+                    JSONObject jsonObject= new JSONObject(s);
+                    if(jsonObject.getBoolean("success")) {
+
+                        List<SbxMessage> messages = new ArrayList<SbxMessage>();
+                        JSONArray jsonArray = jsonObject.getJSONArray("messages");
+                        for (int i=0;i<jsonArray.length();i++) {
+                            JSONObject message = jsonArray.getJSONObject(i);
+                            SbxMessage sbxMessage = new SbxMessage();
+                            sbxMessage.setCreatedAt(SbxDataValidator.getDate(message.getString("created")));
+                            sbxMessage.setId(message.getInt("id"));
+                            sbxMessage.setSender(message.getInt("user_id"));
+                            sbxMessage.setSederEmail(message.getString("user_email"));
+                            sbxMessage.setSenderLogin(message.getString("user_login"));
+                            SbxJsonModeler sbxJsonModeler = clazz.newInstance();
+                            sbxJsonModeler.wrapFromJson(new JSONObject(message.getString("body")));
+                            sbxMessage.setSbxJsonModeler(sbxJsonModeler);
+                            messages.add(sbxMessage);
+
+                        }
+
+
+                            sbxArrayResponse.onSuccess(messages);
+
+
+                    }else{
+                        sbxArrayResponse.onError(new Exception(jsonObject.getString("error")));
+                    }
+                }catch (Exception e){
+                    sbxArrayResponse.onError(e);
+                }
+            }
+        });
+    }
+
 
 }
