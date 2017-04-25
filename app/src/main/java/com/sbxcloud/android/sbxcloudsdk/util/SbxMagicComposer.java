@@ -152,8 +152,9 @@ public class SbxMagicComposer {
                     variable.set(o,
                             SbxDataValidator.getDate(
                                     jsonObject.optJSONObject("_META").optString("created_time")));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new SbxAuthException(e);
+                } catch (Exception e) {
+                   // throw new SbxAuthException(e);
+                    e.printStackTrace();
                 }
 
             }
@@ -295,8 +296,9 @@ public class SbxMagicComposer {
                     variable.set(o,
                             SbxDataValidator.getDate(
                                     jsonObject.optJSONObject("_META").optString("created_time")));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new SbxAuthException(e);
+                } catch ( Exception e) {
+                    e.printStackTrace();
+                   // throw new SbxAuthException(e);
                 }
 
             }
@@ -450,8 +452,8 @@ public class SbxMagicComposer {
                     variable.set(o,
                             SbxDataValidator.getDate(
                                     jsonObject.optJSONObject("_META").optString("created_time")));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new SbxAuthException(e);
+                } catch ( Exception e) {
+                   // throw new SbxAuthException(e);
                 }
 
             }
@@ -611,8 +613,9 @@ public class SbxMagicComposer {
                     variable.set(o,
                             SbxDataValidator.getDate(
                                     jsonObject.optJSONObject("_META").optString("created_time")));
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new SbxAuthException(e);
+                } catch ( Exception e) {
+                    e.printStackTrace();
+                    //throw new SbxAuthException(e);
                 }
 
             }
