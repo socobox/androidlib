@@ -24,7 +24,7 @@ Agregamos la librería como dependencia
 
             dependencies {
                 //...otras dependencias de tu proyeco aquí.....
-                compile 'com.github.sbxcloud:androidlib:v2.2.2'
+                compile 'com.github.sbxcloud:androidlib:v2.3.0'
             }
             
 Esta librería se basa en annotaciones. Para crear tu propia Clase usuario puedes hacerla así:
@@ -387,6 +387,28 @@ Además puedes utilizar RXJava para cualquira de las anteriores fuciones
         });
 ```
 
+
+Ya puedes usar DataBinding y Ejecutar CLoudScript
+
+```java
+
+
+public class User extends SbxUserObservable {
+
+....
+    @Bindable
+    public String getPhone() {
+        return  phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone =  
+        notifyPropertyChanged(BR.phone);
+    }
+    ...
+}
+
+```
 
 
 
