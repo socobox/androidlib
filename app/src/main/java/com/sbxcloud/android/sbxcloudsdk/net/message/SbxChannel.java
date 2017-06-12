@@ -20,6 +20,8 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -92,6 +94,11 @@ public class SbxChannel {
                 }).start();
 
             }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends SbxChannel>>() {
+            @Override
+            public SingleSource<? extends SbxChannel> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
+            }
         });
     }
 
@@ -149,6 +156,11 @@ public class SbxChannel {
                 }).start();
 
             }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends SbxChannel>>() {
+            @Override
+            public SingleSource<? extends SbxChannel> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
+            }
         });
     }
 
@@ -205,6 +217,11 @@ public class SbxChannel {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends SbxMessage>>() {
+            @Override
+            public SingleSource<? extends SbxMessage> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }
@@ -276,6 +293,11 @@ public class SbxChannel {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends List<SbxMessage>>>() {
+            @Override
+            public SingleSource<? extends List<SbxMessage>> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }

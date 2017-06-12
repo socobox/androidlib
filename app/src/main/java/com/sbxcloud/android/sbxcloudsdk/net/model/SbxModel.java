@@ -25,6 +25,8 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -89,6 +91,12 @@ public class SbxModel {
                 }).start();
 
             }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
+
+            }
         });
 
     }
@@ -120,6 +128,11 @@ public class SbxModel {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends List<T>>>() {
+            @Override
+            public SingleSource<? extends List<T>> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
 
@@ -160,6 +173,11 @@ public class SbxModel {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }
@@ -203,6 +221,11 @@ public class SbxModel {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }
@@ -314,6 +337,11 @@ public class SbxModel {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }

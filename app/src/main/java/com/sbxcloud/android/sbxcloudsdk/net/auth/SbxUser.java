@@ -34,7 +34,9 @@ import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -108,6 +110,11 @@ public class SbxUser {
                     }
                 }).start();
             }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
+            }
         });
     }
 
@@ -138,6 +145,11 @@ public class SbxUser {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }
@@ -305,6 +317,11 @@ public class SbxUser {
                 }).start();
 
             }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends String>>() {
+            @Override
+            public SingleSource<? extends String> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
+            }
         });
     }
 
@@ -359,6 +376,11 @@ public class SbxUser {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends String>>() {
+            @Override
+            public SingleSource<? extends String> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }
@@ -423,6 +445,11 @@ public class SbxUser {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }

@@ -19,6 +19,8 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -134,6 +136,11 @@ public class SbxCloudScript {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends SbxCloudScript>>() {
+            @Override
+            public SingleSource<? extends SbxCloudScript> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
 

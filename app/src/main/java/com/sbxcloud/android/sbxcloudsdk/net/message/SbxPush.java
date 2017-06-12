@@ -13,6 +13,8 @@ import java.io.IOException;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -49,6 +51,11 @@ public class SbxPush {
                     }
                 }).start();
 
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends String>>() {
+            @Override
+            public SingleSource<? extends String> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
             }
         });
     }
