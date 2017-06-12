@@ -24,6 +24,7 @@ public interface UrlHelper {
     public static final String MESSAGE_CHANNEL_MEMBER = "api/message/v1/channel/member";
     public static final String MESSAGE_LIST = "api/message/v1/list";
     public static final String MESSAGE_SEND = "api/message/v1/send";
+    public static final String CLOUDSCRIPT_RUN = "api/cloudscript/v1/run";
     public static final String DOMAIN ="api/domain/v1/list/app";
   //  public static final String HEADER_GZIP="gzip";
     public static final String HEADER_JSON="application/json";
