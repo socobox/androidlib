@@ -59,8 +59,9 @@ public class ApiManager {
 
 
         mOkHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(120, TimeUnit.SECONDS)
+                .connectTimeout(260, TimeUnit.SECONDS)
+                .readTimeout(260, TimeUnit.SECONDS)
+                .writeTimeout(260, TimeUnit.SECONDS)
                 .addInterceptor(httpLoggingInterceptor)
                 .build();
     }
