@@ -45,7 +45,7 @@ public class SbxQuery{
     SbxQueryBuilder sbxQueryBuilder;
 
     int rowCount= 0;
-    int totalPages=0;
+    int totalPages=1;
 
     public SbxQuery(Class<?> clazz) throws Exception{
         this.mClazz=clazz;
