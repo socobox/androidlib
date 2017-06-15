@@ -1,5 +1,6 @@
 package com.sbxcloud.android.sbxcloudsdk.net.model;
 
+import android.graphics.Point;
 import android.util.Log;
 
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
@@ -43,6 +44,8 @@ public class SbxQuery{
     Class<?> mClazz;
     SbxQueryBuilder sbxQueryBuilder;
 
+    int rowCount= 0;
+    int totalPages=1;
 
     public SbxQuery(Class<?> clazz) throws Exception{
         this.mClazz=clazz;
@@ -54,6 +57,14 @@ public class SbxQuery{
         this.mClazz=clazz;
         sbxQueryBuilder= SbxModelHelper.prepareQuery(clazz, page, limit);
         // sbxQueryBuilder.insertNewEmptyRow();
+    }
+
+    public void setPage(int page) throws Exception{
+        sbxQueryBuilder.setPage(page);
+    }
+
+    public int getPage(){
+        return sbxQueryBuilder.getPage();
     }
 
     public SbxQuery addAND(){
@@ -130,11 +141,9 @@ public class SbxQuery{
                                 list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0));
                             }
                         }
-
-
-
+                       rowCount = jsonObject.getInt("row_count");
+                       totalPages = jsonObject.getInt("total_pages");
                         sbxArrayResponse.onSuccess(list);
-
 
                     }else{
                         sbxArrayResponse.onError(new Exception(jsonObject.getString("error")));
@@ -146,6 +155,65 @@ public class SbxQuery{
             }
         });
 
+    }
+
+
+
+
+
+    public <T> void findAllInBackground(final SbxArrayResponse  <T> sbxArrayResponse) throws Exception{
+        final List<T> list=new ArrayList<>();
+        final Point error=new Point(0,0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int i=0;
+                    while (getPage() <= totalPages && error.x==0 && i<=30) {
+                        findInBackground(new SbxArrayResponse<T>() {
+                            @Override
+                            public void onError(Exception e) {
+                                error.set(1,1);
+                                notifyAll();
+                                sbxArrayResponse.onError(e);
+                            }
+                            @Override
+                            public void onSuccess(List<T> response) {
+                                try {
+                                    list.addAll(response);
+                                    setPage(getPage() + 1);
+                                } catch (Exception ex) {
+                                    error.set(1,1);
+                                    sbxArrayResponse.onError(ex);
+                                } finally {
+                                    notifyAll();
+                                }
+                            }
+                        });
+                        wait();
+                        i++;
+                    }
+                    if(error.x==0)
+                        sbxArrayResponse.onSuccess(list);
+                    else
+                        sbxArrayResponse.onError(new Exception("No completed"));
+                }catch (Exception ex){
+                    sbxArrayResponse.onError(ex);
+                }
+            }
+        }).start();
+
+
+
+    }
+
+    public <T> Single<List<List<T>>> findAll(Class<T> type) throws Exception{
+            List<Single<List<T>>> list = new ArrayList<>();
+            for (int i=1; i<=Math.min(totalPages,30);i++){
+                setPage(i);
+                list.add(find(type));
+            }
+            return Single.merge(list).toList();
     }
 
     public <T> Single<List<T>> find(Class<T> type) throws Exception{
@@ -172,7 +240,8 @@ public class SbxQuery{
                                         list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0));
                                     }
                                 }
-
+                                rowCount = jsonObject.getInt("row_count");
+                                totalPages = jsonObject.getInt("total_pages");
                                 e.onSuccess(list);
                                 //sucess
                             } else {

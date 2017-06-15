@@ -197,6 +197,14 @@ public class SbxQueryBuilder {
             return this;
         }
 
+        public void setPage(int page)  throws JSONException{
+            obj.put("page", page);
+        }
+
+        public int getPage(){
+           return  obj.optInt("page",1);
+        }
+
         public SbxQueryBuilder(int domain, String rowModel, int page, int size) throws JSONException {
             init(domain,rowModel);
             obj.put("page", page);
