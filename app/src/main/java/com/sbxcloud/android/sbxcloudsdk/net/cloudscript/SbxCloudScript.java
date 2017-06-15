@@ -101,7 +101,7 @@ public class SbxCloudScript {
                         update(jsonObject);
                         simpleResponse.onSuccess(SbxCloudScript.this);
                     }else{
-                        simpleResponse.onError(new Exception(jsonObject.getString("error")));
+                        simpleResponse.onError(new Exception(jsonObject.getString("message")));
                     }
                 }catch (Exception  e ){
                     simpleResponse.onError(e);
