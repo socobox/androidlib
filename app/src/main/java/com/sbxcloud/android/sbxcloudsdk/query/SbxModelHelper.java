@@ -83,22 +83,50 @@ public class SbxModelHelper {
                             }
                             case "int": {
                                 int data = variable.getInt(o);
-                                queryBuilder.insertFieldLastRow(name, data);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "class java.lang.Integer": {
+                                int data = variable.getInt(o);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
                                 break;
                             }
                             case "long": {
                                 long data = variable.getLong(o);
-                                queryBuilder.insertFieldLastRow(name, data);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "class java.lang.Long": {
+                                long data = variable.getLong(o);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
                                 break;
                             }
                             case "double": {
                                 double data = variable.getDouble(o);
-                                queryBuilder.insertFieldLastRow(name, data);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "class java.lang.Double": {
+                                double data = variable.getDouble(o);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
                                 break;
                             }
                             case "float": {
                                 float data = variable.getFloat(o);
-                                queryBuilder.insertFieldLastRow(name, data);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
+                                break;
+                            }
+                            case "class java.lang.Float": {
+                                float data = variable.getFloat(o);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                    queryBuilder.insertFieldLastRow(name, data);
                                 break;
                             }
                             case "class java.util.Date": {
@@ -111,7 +139,8 @@ public class SbxModelHelper {
                             }
                             case "boolean": {
                                 boolean data = variable.getBoolean(o);
-                                queryBuilder.insertFieldLastRow(name, data);
+                                if(SbxDataValidator.saveDefaultValue(annotation) || data)
+                                    queryBuilder.insertFieldLastRow(name, data);
                                 break;
                             }
                             default: {
@@ -197,22 +226,50 @@ public class SbxModelHelper {
                         }
                         case "int":{
                             int data=variable.getInt(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name,data);
                             break;
                         }
-                        case "long":{
-                            long data=variable.getLong(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                        case "class java.lang.Integer": {
+                            int data = variable.getInt(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
                             break;
                         }
-                        case "double":{
-                            double data=variable.getDouble(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                        case "long": {
+                            long data = variable.getLong(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
                             break;
                         }
-                        case "float":{
-                            float data=variable.getFloat(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                        case "class java.lang.Long": {
+                            long data = variable.getLong(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
+                            break;
+                        }
+                        case "double": {
+                            double data = variable.getDouble(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
+                            break;
+                        }
+                        case "class java.lang.Double": {
+                            double data = variable.getDouble(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
+                            break;
+                        }
+                        case "float": {
+                            float data = variable.getFloat(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
+                            break;
+                        }
+                        case "class java.lang.Float": {
+                            float data = variable.getFloat(o);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data!=0)
+                                queryBuilder.insertFieldLastRow(name, data);
                             break;
                         }
                         case "class java.util.Date":{
@@ -225,7 +282,8 @@ public class SbxModelHelper {
                         }
                         case "boolean":{
                             boolean data=variable.getBoolean(o);
-                            queryBuilder.insertFieldLastRow(name,data);
+                            if(SbxDataValidator.saveDefaultValue(annotation) || data)
+                                queryBuilder.insertFieldLastRow(name,data);
                             break;
                         }
                         default:{

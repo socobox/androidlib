@@ -48,6 +48,12 @@ public class SbxDataValidator {
 
     }
 
+    public static Boolean saveDefaultValue( Annotation annotation ) throws Exception{
+        boolean data=((SbxParamField)annotation).saveDefaultValue();
+        return data;
+
+    }
+
     public static boolean hasKeyAnnotation(Class<?> myClass){
         final Field[] variables = myClass.getDeclaredFields();
 

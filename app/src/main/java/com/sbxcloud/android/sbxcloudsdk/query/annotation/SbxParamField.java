@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 public @interface SbxParamField {
 
     String name() default "";
+    boolean saveDefaultValue() default true;
 
 }
