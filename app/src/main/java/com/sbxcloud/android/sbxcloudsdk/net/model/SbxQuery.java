@@ -116,6 +116,9 @@ public class SbxQuery{
         return   this;
     }
 
+    private static final class Lock { }
+    private final Object lock = new Lock();
+
     public <T> void findInBackground(final SbxArrayResponse  <T> sbxArrayResponse) throws Exception{
         SbxUrlComposer sbxUrlComposer=SbxModelHelper.getUrlQuery(sbxQueryBuilder);
         Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
@@ -161,7 +164,7 @@ public class SbxQuery{
 
 
 
-    public <T> void findAllInBackground(final SbxArrayResponse  <T> sbxArrayResponse) throws Exception{
+    public <T>  void  findAllInBackground(final SbxArrayResponse  <T> sbxArrayResponse) throws Exception{
         final List<T> list=new ArrayList<>();
         final Point error=new Point(0,0);
         new Thread(new Runnable() {
@@ -186,11 +189,15 @@ public class SbxQuery{
                                     error.set(1,1);
                                     sbxArrayResponse.onError(ex);
                                 } finally {
-                                    notifyAll();
+                                    synchronized (lock) {
+                                        lock.notifyAll();
+                                    }
                                 }
                             }
                         });
-                        wait();
+                        synchronized (lock) {
+                            lock.wait();
+                        }
                         i++;
                     }
                     if(error.x==0)
