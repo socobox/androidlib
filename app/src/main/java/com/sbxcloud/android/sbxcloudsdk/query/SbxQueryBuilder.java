@@ -45,6 +45,7 @@ public class SbxQueryBuilder {
 
         private JSONArray fetch;
         private JSONObject obj;
+        private JSONObject referenceJoin;
         private JSONArray required;
         private JSONArray where;
         private JSONArray keysD;
@@ -58,13 +59,18 @@ public class SbxQueryBuilder {
             AND, OR
         }
 
-        private ANDOR lastANDOR=ANDOR.AND;
+        private ANDOR lastANDOR=null;
         public enum OP {
             EQ("="),
             LIKE("LIKE"),
+            IN("IN"),
+            NOTIN("NOT IN"),
             LT("<"),
             GT(">"),
+            LET("<="),
+            GET(">="),
             NOT("<>"),
+            IS("IS"),
             ISNOT("IS NOT");
 
             private String val;
@@ -97,6 +103,7 @@ public class SbxQueryBuilder {
             currentGroup.put("ANDOR", ANDOR.AND);
             currentGroup.put("GROUP", new JSONArray());
         }
+
 
 
         public SbxQueryBuilder(int domain, String rowModel, TYPE type ) throws JSONException {
@@ -211,8 +218,10 @@ public class SbxQueryBuilder {
             obj.put("size", size);
         }
 
-        public SbxQueryBuilder newGroup(ANDOR andor) throws JSONException {
+        private SbxQueryBuilder newGroup(ANDOR andor) throws JSONException {
+
             if(row==null) {
+                lastANDOR=null;
                 where.put(currentGroup);
                 currentGroup = new JSONObject();
                 currentGroup.put("ANDOR", andor);
@@ -221,7 +230,15 @@ public class SbxQueryBuilder {
             return this;
         }
 
-        public SbxQueryBuilder addField(OP op, ANDOR andor, String field, Object value) throws JSONException {
+        public SbxQueryBuilder newGroupWithAnd() throws JSONException {
+            return newGroup(ANDOR.AND);
+        }
+
+        public SbxQueryBuilder newGroupWithOr() throws JSONException {
+            return newGroup(ANDOR.OR);
+        }
+
+        private SbxQueryBuilder addField(OP op, ANDOR andor, String field, Object value) throws JSONException {
             if(row==null) {
                 JSONObject tmp = new JSONObject();
                 if(currentGroup.getJSONArray("GROUP").length() > 0)
@@ -236,38 +253,275 @@ public class SbxQueryBuilder {
             return this;
         }
 
-        public SbxQueryBuilder addAND(){
+    private SbxQueryBuilder setReferenceJoin(OP op, String model , String filterField,String referenceField, Object value) throws JSONException {
+        referenceJoin = new JSONObject();
+        referenceJoin.put("row_model",model);
+        JSONObject filter = new JSONObject();
+        filter.put("OP", op.getValue());
+        filter.put("VAL",value);
+        filter.put("FIELD",filterField);
+        referenceJoin.put("reference_field",referenceField);
+        referenceJoin.put("filer", filter);
+        return this;
+    }
+
+        // PRIVATE QUERY METHODS
+
+        private SbxQueryBuilder addAND(){
             lastANDOR = ANDOR.AND;
             return  this;
         }
 
-        public SbxQueryBuilder addOR(){
-            lastANDOR = ANDOR.OR;
+        private SbxQueryBuilder addOR(){
+            if (lastANDOR != null)
+                lastANDOR = ANDOR.OR;
+            else
+                lastANDOR = ANDOR.AND;
             return  this;
         }
 
-        public SbxQueryBuilder whereIsEqual(String field, Object value) throws JSONException{
+        private SbxQueryBuilder whereIsEqual(String field, Object value) throws JSONException{
             return   addField(OP.EQ,lastANDOR,field,value);
         }
 
-        public SbxQueryBuilder whereIsNotNull(String field) throws JSONException{
+        private SbxQueryBuilder whereIsNotNull(String field) throws JSONException{
             return   addField(OP.ISNOT,lastANDOR,field,null);
         }
 
-        public SbxQueryBuilder whereGreaterThan(String field, Object value) throws JSONException{
+        private SbxQueryBuilder whereIsNull(String field) throws JSONException{
+            return   addField(OP.IS,lastANDOR,field,null);
+        }
+
+        private SbxQueryBuilder whereIn(String field, Object value) throws JSONException{
+            return   addField(OP.IN,lastANDOR,field,value);
+        }
+
+        private SbxQueryBuilder whereNotIn(String field, Object value) throws JSONException{
+            return   addField(OP.NOTIN,lastANDOR,field,value);
+        }
+
+        private SbxQueryBuilder whereGreaterThan(String field, Object value) throws JSONException{
             return   addField(OP.GT,lastANDOR,field,value);
         }
 
-        public SbxQueryBuilder whereLessThan(String field, Object value) throws JSONException{
+        private SbxQueryBuilder whereLessThan(String field, Object value) throws JSONException{
             return   addField(OP.LT,lastANDOR,field,value);
         }
 
-        public SbxQueryBuilder whereIsNotEqual(String field, Object value) throws JSONException{
+        private SbxQueryBuilder whereGreaterOrEqualThan(String field, Object value) throws JSONException{
+            return   addField(OP.GET,lastANDOR,field,value);
+        }
+
+        private SbxQueryBuilder whereLessOrEqualThan(String field, Object value) throws JSONException{
+            return   addField(OP.LET,lastANDOR,field,value);
+        }
+
+        private SbxQueryBuilder whereIsNotEqual(String field, Object value) throws JSONException{
             return   addField(OP.NOT,lastANDOR,field,value);
         }
 
-        public SbxQueryBuilder whereLike(String field, Object value) throws JSONException{
+        private SbxQueryBuilder whereLike(String field, Object value) throws JSONException{
             return   addField(OP.LIKE,lastANDOR,field,value);
+        }
+
+
+    public class ReferenceJoin {
+
+        private SbxQueryBuilder find;
+        private String field;
+        private String referenceField;
+
+        ReferenceJoin(SbxQueryBuilder find, String field, String referenceField, String type) throws Exception {
+            this.find = find;
+            this.field = field;
+            this.referenceField = referenceField;
+            if (type.equals("AND")) {
+                this.find.andWhereIn(this.field, "@reference_join@");
+            } else {
+                this.find.orWhereIn(this.field, "@reference_join@");
+            }
+        }
+
+
+        public FilterJoin in(String referenceModel) {
+            return new FilterJoin(this.find, this.field, this.referenceField, referenceModel);
+        }
+    }
+
+
+    public class FilterJoin {
+
+        private SbxQueryBuilder find;
+        private String field;
+        private String referenceField;
+        private String referenceModel;
+
+
+        FilterJoin(SbxQueryBuilder find,String field,String referenceField,String referenceModel) {
+            this.find = find;
+            this.field = field;
+            this.referenceField = referenceField;
+            this.referenceModel = referenceModel;
+        }
+
+
+        public SbxQueryBuilder filterWhereIsEqual(String field, Object value) throws Exception{
+            this.find.setReferenceJoin(OP.EQ, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereIsNotNull(String field) throws  Exception{
+            this.find.setReferenceJoin(OP.ISNOT, this.field, this.referenceField, this.referenceModel, null);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereIsNull(String field) throws  Exception{
+            this.find.setReferenceJoin(OP.IS, this.field, this.referenceField, this.referenceModel, null);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereGreaterThan(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.GT, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereLessThan(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.LT, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereGreaterOrEqualThan(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.GET, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereLessOrEqualThan(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.LET, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereIsNotEqual(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.ISNOT, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereLike(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.LIKE, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereIn(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.IN, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+        public SbxQueryBuilder FilterWhereNotIn(String field, Object value) throws  Exception{
+            this.find.setReferenceJoin(OP.NOTIN, this.field, this.referenceField, this.referenceModel, value);
+            return this.find;
+        }
+
+    }
+
+
+    // PUBLIC QUERY METHODS
+
+        public SbxQueryBuilder andWhereIsEqual(String field, Object value) throws JSONException{
+            addAND();
+            return   whereIsEqual(field,value);
+        }
+
+        public SbxQueryBuilder andWhereIsNotNull(String field) throws JSONException{
+            addAND();
+            return   whereIsNotNull(field );
+        }
+
+        public SbxQueryBuilder andWhereGreaterThan(String field, Object value) throws JSONException{
+            addAND();
+            return   whereGreaterThan(field,value);
+        }
+
+        public SbxQueryBuilder andWhereLessThan(String field, Object value) throws JSONException{
+            addAND();
+            return   whereLessThan(field,value);
+        }
+
+        public SbxQueryBuilder andWhereGreaterOrEqualThan(String field, Object value) throws JSONException{
+            addAND();
+            return   whereGreaterOrEqualThan(field,value);
+        }
+
+        public SbxQueryBuilder andWhereLessOrEqualThan(String field, Object value) throws JSONException{
+            addAND();
+            return   whereLessOrEqualThan(field,value);
+        }
+
+        public SbxQueryBuilder andWhereIsNotEqual(String field, Object value) throws JSONException{
+            addAND();
+            return   whereIsNotEqual(field,value);
+        }
+
+        public SbxQueryBuilder andWhereLike(String field, Object value) throws JSONException{
+            addAND();
+            return   whereLike(field,value);
+        }
+
+        public SbxQueryBuilder andWhereIn(String field, Object value) throws JSONException{
+            addAND();
+            return   whereIn(field,value);
+        }
+
+
+        public SbxQueryBuilder orWhereIsEqual(String field, Object value) throws JSONException{
+            addOR();
+            return   whereIsEqual(field,value);
+        }
+
+        public SbxQueryBuilder orWhereIsNotNull(String field) throws JSONException{
+            addOR();
+            return   whereIsNotNull(field );
+        }
+
+        public SbxQueryBuilder orWhereGreaterThan(String field, Object value) throws JSONException{
+            addOR();
+            return   whereGreaterThan(field,value);
+        }
+
+        public SbxQueryBuilder orWhereLessThan(String field, Object value) throws JSONException{
+            addOR();
+            return   whereLessThan(field,value);
+        }
+
+        public SbxQueryBuilder orWhereGreaterOrEqualThan(String field, Object value) throws JSONException{
+            addOR();
+            return   whereGreaterOrEqualThan(field,value);
+        }
+
+        public SbxQueryBuilder orWhereLessOrEqualThan(String field, Object value) throws JSONException{
+            addOR();
+            return   whereLessOrEqualThan(field,value);
+        }
+
+        public SbxQueryBuilder orWhereIsNotEqual(String field, Object value) throws JSONException{
+            addOR();
+            return   whereIsNotEqual(field,value);
+        }
+
+        public SbxQueryBuilder orWhereLike(String field, Object value) throws JSONException{
+            addOR();
+            return   whereLike(field,value);
+        }
+
+        public SbxQueryBuilder orWhereIn(String field, Object value) throws JSONException{
+            addOR();
+            return   whereIn(field,value);
+        }
+
+        public ReferenceJoin orWhereReferenceJoinBetween(String field, String referenceField) throws Exception {
+            return new ReferenceJoin(this, field, referenceField, "OR");
+        }
+
+        public ReferenceJoin andWhereReferenceJoinBetween(String field, String referenceField) throws Exception {
+            return new ReferenceJoin(this, field, referenceField, "AND");
         }
 
         public SbxQueryBuilder addRequire(String model) {
@@ -323,6 +577,9 @@ public class SbxQueryBuilder {
 
                 if (where!=null && where.length() > 0) {
                     obj.put("where", where);
+                }
+                if (referenceJoin!=null ) {
+                    obj.put("reference_join", referenceJoin);
                 }
 
                 if (required!=null && required.length() > 0) {
