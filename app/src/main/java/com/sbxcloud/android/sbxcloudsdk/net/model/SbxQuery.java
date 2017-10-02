@@ -198,53 +198,53 @@ public class SbxQuery{
             return this.find;
         }
 
-        public SbxQuery FilterWhereIsNotNull(String field) throws  Exception{
-            this.filter.FilterWhereIsNotNull( field);
+        public SbxQuery filterWhereIsNotNull(String field) throws  Exception{
+            this.filter.filterWhereIsNotNull( field);
             return this.find;
         }
 
-        public SbxQuery FilterWhereIsNull(String field) throws  Exception{
-            this.filter.FilterWhereIsNull( field);
+        public SbxQuery filterWhereIsNull(String field) throws  Exception{
+            this.filter.filterWhereIsNull( field);
             return this.find;
         }
 
-        public SbxQuery FilterWhereGreaterThan(String field, Object value) throws  Exception{
-            this.filter.FilterWhereGreaterThan( field, value);
+        public SbxQuery filterWhereGreaterThan(String field, Object value) throws  Exception{
+            this.filter.filterWhereGreaterThan( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereLessThan(String field, Object value) throws  Exception{
-            this.filter.FilterWhereLessThan( field, value);
+        public SbxQuery filterWhereLessThan(String field, Object value) throws  Exception{
+            this.filter.filterWhereLessThan( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereGreaterOrEqualThan(String field, Object value) throws  Exception{
-            this.filter.FilterWhereGreaterOrEqualThan( field, value);
+        public SbxQuery filterWhereGreaterOrEqualThan(String field, Object value) throws  Exception{
+            this.filter.filterWhereGreaterOrEqualThan( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereLessOrEqualThan(String field, Object value) throws  Exception{
-            this.filter.FilterWhereLessOrEqualThan( field, value);
+        public SbxQuery filterWhereLessOrEqualThan(String field, Object value) throws  Exception{
+            this.filter.filterWhereLessOrEqualThan( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereIsNotEqual(String field, Object value) throws  Exception{
-            this.filter.FilterWhereIsNotEqual( field, value);
+        public SbxQuery filterWhereIsNotEqual(String field, Object value) throws  Exception{
+            this.filter.filterWhereIsNotEqual( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereLike(String field, Object value) throws  Exception{
-            this.filter.FilterWhereLike( field, value);
+        public SbxQuery filterWhereLike(String field, Object value) throws  Exception{
+            this.filter.filterWhereLike( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereIn(String field, Object value) throws  Exception{
-            this.filter.FilterWhereIn( field, value);
+        public SbxQuery filterWhereIn(String field, Object value) throws  Exception{
+            this.filter.filterWhereIn( field, value);
             return this.find;
         }
 
-        public SbxQuery FilterWhereNotIn(String field, Object value) throws  Exception{
-            this.filter.FilterWhereNotIn( field, value);
+        public SbxQuery filterWhereNotIn(String field, Object value) throws  Exception{
+            this.filter.filterWhereNotIn( field, value);
             return this.find;
         }
 
@@ -288,8 +288,8 @@ public class SbxQuery{
                                 list.add((T) SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(i), mClazz, 0));
                             }
                         }
-                       rowCount = jsonObject.getInt("row_count");
-                       totalPages = jsonObject.getInt("total_pages");
+                        rowCount = jsonObject.getInt("row_count");
+                        totalPages = jsonObject.getInt("total_pages");
                         sbxArrayResponse.onSuccess(list);
 
                     }else{
@@ -359,12 +359,12 @@ public class SbxQuery{
     }
 
     public <T> Single<List<List<T>>> findAll(Class<T> type) throws Exception{
-            List<Single<List<T>>> list = new ArrayList<>();
-            for (int i=1; i<=Math.min(totalPages,30);i++){
-                setPage(i);
-                list.add(find(type));
-            }
-            return Single.merge(list).toList();
+        List<Single<List<T>>> list = new ArrayList<>();
+        for (int i=1; i<=Math.min(totalPages,30);i++){
+            setPage(i);
+            list.add(find(type));
+        }
+        return Single.merge(list).toList();
     }
 
     public <T> Single<List<T>> find(Class<T> type) throws Exception{
