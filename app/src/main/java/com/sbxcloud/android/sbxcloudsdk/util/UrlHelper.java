@@ -29,6 +29,7 @@ public interface UrlHelper {
   //  public static final String HEADER_GZIP="gzip";
     public static final String HEADER_JSON="application/json";
     public static final String HEADER_BEARER="Bearer ";
+    public static final String VALIDATE="api/user/v1/validate ";
     public static final String POST="POST";
     public static final String GET="GET";
     public static final String PUT="PUT";
