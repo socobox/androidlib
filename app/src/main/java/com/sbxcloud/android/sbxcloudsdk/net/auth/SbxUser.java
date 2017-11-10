@@ -154,6 +154,67 @@ public class SbxUser {
         });
     }
 
+    public <T extends SbxUser> Single<T> validateToken(Class<T> type, String token) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getDefaultSbxAuth().validateToken(token);
+        final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        return Single.create(new SingleOnSubscribe<T>() {
+            @Override
+            public void subscribe(final SingleEmitter<T> e) throws Exception {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Response response=ApiManager.getInstance().getOkHttpClient().newCall(request).execute();
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            Log.e("user",jsonObject.toString());
+                            if (jsonObject.getBoolean("success")) {
+                                updateUser(jsonObject);
+                                e.onSuccess((T)SbxUser.this);
+                                //sucess
+                            } else {
+                                //error
+                                e.onError(new Exception(jsonObject.getString("error")));
+                            }
+                        }catch (Exception ex){
+                            e.onError(ex);
+                        }
+                    }
+                }).start();
+
+            }
+        }).onErrorResumeNext(new Function<Throwable, SingleSource<? extends T>>() {
+            @Override
+            public SingleSource<? extends T> apply(Throwable throwable) throws Exception {
+                return Single.error(throwable);
+            }
+        });
+    }
+
+    public void validateTokenInBackground(final SbxSimpleResponse simpleResponse, String token) throws Exception{
+        SbxUrlComposer sbxUrlComposer= SbxAuth.getDefaultSbxAuth().validateToken(token);
+        Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
+        ApiManager.getInstance().getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                simpleResponse.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    if(jsonObject.getBoolean("success")) {
+                        updateUser(jsonObject);
+                        simpleResponse.onSuccess(SbxUser.this);
+                    }else{
+                        simpleResponse.onError(new Exception(jsonObject.getString("error")));
+                    }
+                }catch (Exception  e ){
+                    simpleResponse.onError(e);
+                }
+            }
+        });
+    }
 
     public void logInBackground(final SbxSimpleResponse simpleResponse) throws Exception{
         SbxUrlComposer sbxUrlComposer= SbxAuth.getDefaultSbxAuth().getUrllogin(this);
