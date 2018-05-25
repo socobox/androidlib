@@ -1,9 +1,9 @@
 package com.sbxcloud.android.sbxcloudsdk;
 
 import com.sbxcloud.android.sbxcloudsdk.net.model.SbxModel;
-import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
-import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxModelName;
-import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxParamField;
+import com.sbxcloud.java.sbxcloudsdk.query.annotation.SbxKey;
+import com.sbxcloud.java.sbxcloudsdk.query.annotation.SbxModelName;
+import com.sbxcloud.java.sbxcloudsdk.query.annotation.SbxParamField;
 
 import java.util.Date;
 

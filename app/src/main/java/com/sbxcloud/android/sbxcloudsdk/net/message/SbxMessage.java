@@ -1,6 +1,6 @@
 package com.sbxcloud.android.sbxcloudsdk.net.message;
 
-import com.sbxcloud.android.sbxcloudsdk.util.SbxJsonModeler;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxJsonModeler;
 
 import java.util.Date;
 

@@ -1,8 +1,8 @@
 package com.sbxcloud.android.sbxcloudsdk.net;
 
-import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
-import com.sbxcloud.android.sbxcloudsdk.util.UrlHelper;
+import com.sbxcloud.java.sbxcloudsdk.auth.SbxAuth;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxUrlComposer;
+import com.sbxcloud.java.sbxcloudsdk.util.UrlHelper;
 
 import org.json.JSONObject;
 

@@ -4,18 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxAuthToken;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxEmailField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxNameField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxUsernameField;
-import com.sbxcloud.android.sbxcloudsdk.exception.SbxAuthException;
-import com.sbxcloud.android.sbxcloudsdk.exception.SbxConfigException;
+import com.sbxcloud.java.sbxcloudsdk.auth.SbxAuth;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxAuthToken;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxEmailField;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxNameField;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxUsernameField;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxSimpleResponse;
+import com.sbxcloud.java.sbxcloudsdk.exception.SbxAuthException;
+import com.sbxcloud.java.sbxcloudsdk.exception.SbxConfigException;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
-import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxJsonModeler;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
+import com.sbxcloud.java.sbxcloudsdk.query.annotation.SbxKey;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxJsonModeler;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,18 +26,11 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.SingleSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -245,12 +238,12 @@ public class SbxUser {
     public void logOut() throws Exception{
         sbxUser=null;
         SbxAuth.getDefaultSbxAuth().resetToken();
-        SharedPreferences sharedPreferences = SbxAuth.getDefaultSbxAuth().getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SbxAuthAndroid.getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
         sharedPreferences.edit().putString(FILE_NAME_USER, "").commit();
     }
 
     public void updateUser(JSONObject jsonObject) throws Exception{
-        SharedPreferences sharedPreferences = SbxAuth.getDefaultSbxAuth().getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SbxAuthAndroid.getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
         sharedPreferences.edit().putString(FILE_NAME_USER, jsonObject.toString()).commit();
         String token=jsonObject.getString("token");
         JSONObject userJson=jsonObject.getJSONObject("user");
@@ -323,7 +316,7 @@ public class SbxUser {
 
     public static SbxUser getCurrentSbxUser(Class<?> clazz)throws Exception {
         if(sbxUser==null) {
-            SharedPreferences sharedPreferences = SbxAuth.getDefaultSbxAuth().getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = SbxAuthAndroid.getContext().getSharedPreferences(FILE_NAME,Context.MODE_PRIVATE);
             String s=sharedPreferences.getString(FILE_NAME_USER,"");
             if(s.equals("")) {
                 return null;

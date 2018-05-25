@@ -1,11 +1,11 @@
 package com.sbxcloud.android.sbxcloudsdk.net.model;
 
-import com.sbxcloud.android.sbxcloudsdk.message.SbxChannelHelper;
+import com.sbxcloud.java.sbxcloudsdk.message.SbxChannelHelper;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxSimpleResponse;
 import com.sbxcloud.android.sbxcloudsdk.net.message.SbxChannel;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxFileHelper;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxFileHelper;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONObject;
 

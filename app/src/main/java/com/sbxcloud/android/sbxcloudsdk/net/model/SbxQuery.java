@@ -4,11 +4,11 @@ import android.graphics.Point;
 import android.util.Log;
 
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxArrayResponse;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxQueryBuilder;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxMagicComposer;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxArrayResponse;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxModelHelper;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxQueryBuilder;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxMagicComposer;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
