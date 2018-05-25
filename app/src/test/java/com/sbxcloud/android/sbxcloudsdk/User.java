@@ -1,12 +1,12 @@
 package com.sbxcloud.android.sbxcloudsdk;
 
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxAuthToken;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxEmailField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxNameField;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxPasswordField;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxAuthToken;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxEmailField;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxNameField;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxPasswordField;
 import com.sbxcloud.android.sbxcloudsdk.net.auth.SbxUser;
-import com.sbxcloud.android.sbxcloudsdk.auth.user.SbxUsernameField;
-import com.sbxcloud.android.sbxcloudsdk.query.annotation.SbxKey;
+import com.sbxcloud.java.sbxcloudsdk.auth.user.SbxUsernameField;
+import com.sbxcloud.java.sbxcloudsdk.query.annotation.SbxKey;
 
 /**
  * Created by lgguzman on 20/02/17.

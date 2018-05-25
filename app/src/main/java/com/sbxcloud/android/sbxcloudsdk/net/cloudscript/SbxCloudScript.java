@@ -1,12 +1,12 @@
 package com.sbxcloud.android.sbxcloudsdk.net.cloudscript;
 
-import com.sbxcloud.android.sbxcloudsdk.cloudscript.SbxCloudScriptHelper;
+import com.sbxcloud.java.sbxcloudsdk.cloudscript.SbxCloudScriptHelper;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxSimpleResponse;
 import com.sbxcloud.android.sbxcloudsdk.net.model.SbxModel;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxModelHelper;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxDataValidator;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

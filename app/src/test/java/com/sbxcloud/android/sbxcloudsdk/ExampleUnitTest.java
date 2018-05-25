@@ -7,13 +7,13 @@ import android.test.mock.MockContext;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
 
-import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxArrayResponse;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
+import com.sbxcloud.java.sbxcloudsdk.auth.SbxAuth;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxArrayResponse;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxSimpleResponse;
 import com.sbxcloud.android.sbxcloudsdk.net.model.SbxQuery;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxQueryBuilder;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxMagicComposer;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxModelHelper;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxQueryBuilder;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxMagicComposer;
 
 import org.json.JSONObject;
 import org.junit.Assert;

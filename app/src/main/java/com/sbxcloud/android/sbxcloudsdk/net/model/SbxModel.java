@@ -2,16 +2,16 @@ package com.sbxcloud.android.sbxcloudsdk.net.model;
 
 import android.util.Log;
 
-import com.sbxcloud.android.sbxcloudsdk.auth.SbxAuth;
+import com.sbxcloud.java.sbxcloudsdk.auth.SbxAuth;
 import com.sbxcloud.android.sbxcloudsdk.net.ApiManager;
 import com.sbxcloud.android.sbxcloudsdk.net.auth.SbxUser;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxArrayResponse;
-import com.sbxcloud.android.sbxcloudsdk.net.callback.SbxSimpleResponse;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxModelHelper;
-import com.sbxcloud.android.sbxcloudsdk.query.SbxQueryBuilder;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxDataValidator;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxMagicComposer;
-import com.sbxcloud.android.sbxcloudsdk.util.SbxUrlComposer;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxArrayResponse;
+import com.sbxcloud.java.sbxcloudsdk.callback.SbxSimpleResponse;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxModelHelper;
+import com.sbxcloud.java.sbxcloudsdk.query.SbxQueryBuilder;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxDataValidator;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxMagicComposer;
+import com.sbxcloud.java.sbxcloudsdk.util.SbxUrlComposer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,7 +64,7 @@ public class SbxModel {
         });
     }
 
-    public <T extends SbxModel> Single<T> save(Class<T> type)throws  Exception{
+    public <T extends SbxModel> Single<T> save()throws  Exception{
         SbxUrlComposer sbxUrlComposer = SbxModelHelper.getUrlInsertOrUpdateRow(SbxModel.this);
         final Request request = ApiManager.getInstance().sbxUrlComposer2Request(sbxUrlComposer);
         return Single.create(new SingleOnSubscribe<T>() {
@@ -138,7 +138,7 @@ public class SbxModel {
 
     }
 
-    public  <T extends SbxModel>Single<T> fetch(Class<T> type)throws  Exception{
+    public  <T extends SbxModel>Single<T> fetch()throws  Exception{
 
         String []keys = {SbxModelHelper.getKeyFromAnnotation(this)};
         SbxQueryBuilder sbxQueryBuilder = (new SbxQuery(this.getClass())).sbxQueryBuilder;
@@ -156,7 +156,7 @@ public class SbxModel {
                             if (jsonObject.getBoolean("success")) {
                                 JSONArray jsonArray=jsonObject.getJSONArray("results");
                                 if(jsonArray.length()>0) {
-                                    SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this.getClass(),SbxModel.this, 0);
+                                    SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0),  SbxModel.this, 0);
 
                                     e.onSuccess((T)SbxModel.this);
                                 }else{
@@ -182,7 +182,7 @@ public class SbxModel {
         });
     }
 
-    public  <T extends SbxModel>Single<T> fetch(Class<T> type,String []properties)throws  Exception{
+    public  <T extends SbxModel>Single<T> fetch(String []properties)throws  Exception{
         String []keys = {SbxModelHelper.getKeyFromAnnotation(this)};
         SbxQueryBuilder sbxQueryBuilder = (new SbxQuery(this.getClass())).fetch(properties).sbxQueryBuilder;
         SbxUrlComposer sbxUrlComposer = SbxModelHelper.getUrlQueryKeys(sbxQueryBuilder, keys);
@@ -201,9 +201,9 @@ public class SbxModel {
                                 JSONArray jsonArray=jsonObject.getJSONArray("results");
                                 if(jsonArray.length()>0) {
                                     if(jsonObject.has("fetched_results")) {
-                                        SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this.getClass(), SbxModel.this, 0,jsonObject.getJSONObject("fetched_results"));
+                                        SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0),  SbxModel.this, 0,jsonObject.getJSONObject("fetched_results"));
                                     }else{
-                                        SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this.getClass(), SbxModel.this, 0);
+                                        SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0),  SbxModel.this, 0);
                                     }
 
                                     e.onSuccess((T)SbxModel.this);
@@ -250,7 +250,7 @@ public class SbxModel {
 
                         JSONArray jsonArray=jsonObject.getJSONArray("results");
                         if(jsonArray.length()>0) {
-                            SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this.getClass(),SbxModel.this, 0);
+                            SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this, 0);
                             simpleResponse.onSuccess(SbxModel.this);
                         }else{
                             simpleResponse.onError(new Exception("key not found"));
@@ -288,9 +288,9 @@ public class SbxModel {
                         JSONArray jsonArray=jsonObject.getJSONArray("results");
                         if(jsonArray.length()>0) {
                             if(jsonObject.has("fetched_results")) {
-                                SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this.getClass(), SbxModel.this, 0,jsonObject.getJSONObject("fetched_results"));
+                                SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0),  SbxModel.this, 0,jsonObject.getJSONObject("fetched_results"));
                             }else{
-                                SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this.getClass(), SbxModel.this, 0);
+                                SbxMagicComposer.getSbxModel(jsonArray.getJSONObject(0), SbxModel.this, 0);
                             }
                             simpleResponse.onSuccess(SbxModel.this);
                         }else{
@@ -308,7 +308,7 @@ public class SbxModel {
         });
     }
 
-    public  <T extends SbxModel>Single<T> delete(Class<T> type)throws  Exception{
+    public  <T extends SbxModel>Single<T> delete()throws  Exception{
 
         SbxQueryBuilder sbxQueryBuilder = SbxModelHelper.prepareQueryToDelete(this.getClass());
         sbxQueryBuilder.addDeleteKey(SbxModelHelper.getKeyFromAnnotation(this));
